@@ -115,6 +115,7 @@ void LoadEmulatorDll()
 EMU_EXPORT BOOL EmuInitialize(void)
 {
 	LoadEmulatorDll();
+	if ((&EmuBS_Initialize) == nullptr) { return EmuDB_Initialize[0](); }
 	return EmuDB_Initialize[0]() && EmuBS_Initialize();
 }
 
