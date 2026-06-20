@@ -159,8 +159,17 @@ EMU_EXPORT DWORD EmuExecute(DWORD Addr, int NParams,...)
 	int UsedDosBox=-1;
 	if (EmuBS_Execute == nullptr) {
 		char Buff[32];
+		char Buff_nf[2048];
+		char Buff_a[2048];
+		char Buff_b[2048];
+		GetModuleFileNameA(0, Buff_nf, 2048);
+		char* P = strrchr(Buff_nf, '\\');
+		if (P)
+			*P = 0;
+		sprintf_s(Buff_a,"%s\\%s", Buff_nf, "dosbox_emu.dll");
 		sprintf_s(Buff, "dosbox_emu%d.dll", cnt4ldemu + NUM_DOSBOXES);
-		CopyFileA("dosbox_emu.dll", Buff,true); 
+		sprintf_s(Buff_b, "%s\\%s", Buff_nf, Buff);
+		CopyFileA(Buff_a, Buff_b,false);
 		HMODULE HM = LoadLibraryA(Buff);
 		EmuNP_Initialize = (t_func0*)GetProcAddress(HM, "EmuInitialize");
 		if (EmuNP_Initialize) { EmuNP_Initialize(); }
