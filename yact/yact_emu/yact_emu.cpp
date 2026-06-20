@@ -1147,9 +1147,11 @@ unsigned int ProcessCallback(unsigned int reg_eax, unsigned int reg_eip)
 			exit(0);
 		}
 #endif
-		* (UINT8*)(reg_eip - 5) = (Functemp & 0x80000000) ? 1 : 0;
+		//* (UINT8*)(reg_eip - 5) = (Functemp & 0x80000000) ? 1 : 0;
 		*(DWORD*)(reg_eip - 4) = Func;
 	}
+
+	int tmp = 0;
 
 	if (0x80000000 == Func)
 #ifndef _DEBUG
@@ -1157,9 +1159,10 @@ unsigned int ProcessCallback(unsigned int reg_eax, unsigned int reg_eip)
 #else
 		exit(0);
 #endif
-	int tmp = 0;
+	//int tmp = 0;
 	__try {
-		tmp = ((func*)(((*(UINT8*)(reg_eip - 5)) ? 0x80000000 : 0) | (0x7fffffff & Func)))(Param);
+		//tmp = ((func*)(((*(UINT8*)(reg_eip - 5)) ? 0x80000000 : 0) | (0x7fffffff & Func)))(Param);
+		tmp = ((func*)(0x7fffffff & Func))(Param);
 	}
 	__except (EXCEPTION_EXECUTE_HANDLER)
 	{
@@ -1294,21 +1297,14 @@ EMU_EXPORT DWORD EmuExecute(DWORD Addr, int NParams, ...)
 
 		case 2:
 			VERBOSE(("ia32: return from panic"));
-			return;
+			break;
+			//return;
 
 		default:
 			VERBOSE(("ia32: return from unknown cause"));
 			break;
 		}
 #endif
-		if (!CPU_TRAP) {
-			do {
-				if (CbIsReturnToHost(CPU_EIP)) { break; }
-				exec_1step();
-				//dmax86();
-			} while (CPU_REMCLOCK > 0);
-		}
-		else {
 			do {
 				if (CbIsReturnToHost(CPU_EIP)) { break; }
 				exec_1step();
@@ -1318,7 +1314,6 @@ EMU_EXPORT DWORD EmuExecute(DWORD Addr, int NParams, ...)
 				}
 				//dmax86();
 			} while (CPU_REMCLOCK > 0);
-		}
 #ifdef __cplusplus
 		}
 	catch (int e) {
