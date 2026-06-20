@@ -19,16 +19,25 @@ t_CbRemoveCallAtThreadExit *CbRemoveCallAtThreadExit=0;
 typedef BOOL t_func0(void);
 typedef DWORD t_func1(DWORD Addr, int NParams,...);
 
+#if 1
+
 #ifdef _DEBUG
 #define NUM_DOSBOXES 1
 #else
 #define NUM_DOSBOXES 16
+//#define NUM_DOSBOXES 31
+#endif
+#else
+#define NUM_DOSBOXES 1
 #endif
 static t_func0 *EmuDB_Initialize[NUM_DOSBOXES];
 static t_func1 *EmuDB_Execute[NUM_DOSBOXES];
 
 t_func0 *EmuBS_Initialize=0;
 t_func1 *EmuBS_Execute=0;
+
+t_func0* EmuNP_Initialize = 0;
+t_func1* EmuNP_Execute = 0;
 
 void LoadEmulatorDll()
 {
@@ -86,11 +95,14 @@ void LoadEmulatorDll()
 		LogErr("Unable to load x86 emulator engine %s, error %d",DllBS,GetLastError());
 		ExitProcess(-1);
 	}
+	else {
 
-	EmuBS_Initialize=(t_func0*)GetProcAddress(HM,"EmuInitialize");
-	EmuBS_Execute=(t_func1*)GetProcAddress(HM,"EmuExecute");
+		EmuBS_Initialize = (t_func0*)GetProcAddress(HM, "EmuInitialize");
+		EmuBS_Execute = (t_func1*)GetProcAddress(HM, "EmuExecute");
 
-	if(EmuBS_Initialize==0 || EmuDB_Initialize[0]==0 || EmuBS_Execute==0 || EmuDB_Execute[0]==0)
+	}
+
+	if(/*EmuBS_Initialize == 0 ||*/ EmuDB_Initialize[0] == 0/* || EmuBS_Execute == 0*/ || EmuDB_Execute[0] == 0)
 	{
 		LogErr("Invalid x86 emulator engines");
 		ExitProcess(-1);
@@ -128,6 +140,8 @@ void FreeDB(void *Ptr)
 	DosboxLock.Unlock();
 }
 
+int cnt4ldemu = 0;
+
 EMU_EXPORT DWORD EmuExecute(DWORD Addr, int NParams,...)
 {
 #define MAXARGS 8
@@ -142,7 +156,19 @@ EMU_EXPORT DWORD EmuExecute(DWORD Addr, int NParams,...)
 	t_func1 *Emu_Execute=0;
 	DosboxLock.Lock();
 	int UsedDosBox=-1;
-	Emu_Execute=EmuBS_Execute;
+	if ((&EmuBS_Execute) == nullptr) {
+		char Buff[32];
+		sprintf_s(Buff, "dosbox_emu%d.dll", cnt4ldemu + NUM_DOSBOXES);
+		CopyFileA("dosbox_emu.dll", Buff,true); 
+		HMODULE HM = LoadLibraryA(Buff);
+		EmuNP_Initialize = (t_func0*)GetProcAddress(HM, "EmuInitialize");
+		EmuNP_Initialize();
+		Emu_Execute = (t_func1*)GetProcAddress(HM, "EmuExecute");
+		cnt4ldemu++;
+	}
+	else {
+		Emu_Execute = EmuBS_Execute;
+	}
 #ifndef _DEBUG
 	for(int i=0; i<NUM_DOSBOXES; i++)
 		if(DBInUse[i]==0)
