@@ -93,7 +93,7 @@ void LoadEmulatorDll()
 	if(HM==0)
 	{
 		LogErr("Unable to load x86 emulator engine %s, error %d",DllBS,GetLastError());
-		ExitProcess(-1);
+		//ExitProcess(-1);
 	}
 	else {
 
@@ -115,7 +115,7 @@ void LoadEmulatorDll()
 EMU_EXPORT BOOL EmuInitialize(void)
 {
 	LoadEmulatorDll();
-	if ((&EmuBS_Initialize) == nullptr) { return EmuDB_Initialize[0](); }
+	if (EmuBS_Initialize == nullptr) { return EmuDB_Initialize[0](); }
 	return EmuDB_Initialize[0]() && EmuBS_Initialize();
 }
 
@@ -157,13 +157,13 @@ EMU_EXPORT DWORD EmuExecute(DWORD Addr, int NParams,...)
 	t_func1 *Emu_Execute=0;
 	DosboxLock.Lock();
 	int UsedDosBox=-1;
-	if ((&EmuBS_Execute) == nullptr) {
+	if (EmuBS_Execute == nullptr) {
 		char Buff[32];
 		sprintf_s(Buff, "dosbox_emu%d.dll", cnt4ldemu + NUM_DOSBOXES);
 		CopyFileA("dosbox_emu.dll", Buff,true); 
 		HMODULE HM = LoadLibraryA(Buff);
 		EmuNP_Initialize = (t_func0*)GetProcAddress(HM, "EmuInitialize");
-		EmuNP_Initialize();
+		if (EmuNP_Initialize) { EmuNP_Initialize(); }
 		Emu_Execute = (t_func1*)GetProcAddress(HM, "EmuExecute");
 		cnt4ldemu++;
 	}
