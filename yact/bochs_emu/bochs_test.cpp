@@ -647,7 +647,11 @@ EMU_EXPORT DWORD EmuExecute(DWORD Addr, int NParams,...)
 
 		// CR0 deltas
 		BX_CPU(0)->cr0.set_PE(1); // protected mode
-		BX_CPU(0)->cr4.set_OSFXSR(0);	// no SSE
+		//BX_CPU(0)->cr4.set_OSFXSR(0);	// no SSE
+		BX_CPU(0)->cr4.set_OSFXSR(1);	// SSE Enabled
+		BX_CPU(0)->cr4.set_OSXSAVE(1);
+		BX_CPU(0)->cr4.set_OSXMMEXCPT(1);
+		BX_CPU(0)->cr0.set_MP(1);
 		BX_CPU(0)->set_IF(1);
 		BX_CPU(0)->the_i387.cwd=GetFPUCW();	
 		BX_CPU(0)->the_i387.swd=0x122;
