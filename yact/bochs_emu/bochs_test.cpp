@@ -211,7 +211,7 @@ unsigned int ProcessCallback(unsigned int reg_eax, unsigned int reg_eip)
 			exit(0);
 		}
 #endif
-		*(UINT8*)(reg_eip-5)=(Functemp&0x80000000) ? 1:0;
+		//*(UINT8*)(reg_eip-5)=(Functemp&0x80000000) ? 1:0;
 		*(DWORD*)(reg_eip-4)=Func;
 	}
 
@@ -223,7 +223,8 @@ unsigned int ProcessCallback(unsigned int reg_eax, unsigned int reg_eip)
 #endif
 	int tmp=0;
 	__try {
-		tmp=((func*)(((*(UINT8*)(reg_eip-5))?0x80000000:0)|(0x7fffffff&Func)))(Param);
+		//tmp=((func*)(((*(UINT8*)(reg_eip-5))?0x80000000:0)|(0x7fffffff&Func)))(Param);
+		tmp = ((func*)((0x7fffffff & Func)))(Param);
 	} __except(EXCEPTION_EXECUTE_HANDLER)
 	{
 #ifdef _DEBUG
@@ -663,6 +664,7 @@ EMU_EXPORT DWORD EmuExecute(DWORD Addr, int NParams,...)
 
 		BX_CPU(0)->init_isa_features_bitmask();
 		BX_CPU(0)->set_cpuid_defaults();
+		BX_CPU(0)->handleSseModeChange();
 	}
 	CbCallAtThreadExit(ReuseBX_CPU,BX_CPU(0));
 
