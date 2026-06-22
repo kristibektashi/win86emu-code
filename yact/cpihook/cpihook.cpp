@@ -375,11 +375,19 @@ DWORD WINAPI MyCreateProcessInternalW(
 			wcsncat(wchar4tmp, wchar4tmp4, cnt4cpi3);
 			//MessageBoxW(0, wchar4tmp, L"wchar4tmp", 0);
 			//MessageBoxW(0, lpApplicationName, L"lpApplicationName", 0);
-			ret = ((__CreateProcessInternalW)cpi4acc)(unknown1, wchar4tmp5, wchar4tmp, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation, unknown2);
+			if (lpApplicationName == nullptr) {
+				ret = ((__CreateProcessInternalW)cpi4acc)(unknown1, lpApplicationName, wchar4tmp, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation, unknown2);
+			} else {
+				if (lpApplicationName == L"") {
+					ret = ((__CreateProcessInternalW)cpi4acc)(unknown1, lpApplicationName, wchar4tmp, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation, unknown2);
+				} else {
+					ret = ((__CreateProcessInternalW)cpi4acc)(unknown1, wchar4tmp5, wchar4tmp, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation, unknown2);
+				}
+			}
 			memcpy(cpi, JMPCode, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode)); return ret;
 		}
 		if (lpApplicationName != nullptr) {
-			MessageBoxW(0, lpApplicationName, L"lpApplicationName", 0);
+			//MessageBoxW(0, lpApplicationName, L"lpApplicationName", 0);
 			DWORD Ret = GetModuleFileNameW(CpiHookModule, wchar4tmp, MAX_PATH);
 			wchar_t* Pp = wcsrchr(wchar4tmp, '\\');
 			if (Pp)
