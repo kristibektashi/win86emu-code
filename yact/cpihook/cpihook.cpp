@@ -619,23 +619,19 @@ DWORD WINAPI MyCreateProcessA(
 	__in         LPSTARTUPINFOA lpStartupInfo,
 	__out        LPPROCESS_INFORMATION lpProcessInformation
 ) {
-	LPCWSTR lpApplicationName2 = (LPCWSTR)malloc(8192);
-	LPWSTR lpCommandLine2 = (LPWSTR)malloc(8192);
-	LPCWSTR lpCurrentDirectory2 = (LPCWSTR)malloc(8192);
-	LPSTARTUPINFOW lpStartupInfo2 = (LPSTARTUPINFOW)malloc(sizeof(STARTUPINFOW));
-	LPWSTR __lpReserved2 = 0;
-	LPWSTR __lpDesktop2 = 0;
-	LPWSTR __lpTitle2 = 0;
-	if (lpStartupInfo->lpReserved != nullptr) { __lpReserved2 = (LPWSTR)malloc(strlen(lpStartupInfo->lpReserved) * 2); mbstowcs(__lpReserved2, lpStartupInfo->lpReserved, strlen(lpStartupInfo->lpReserved)); }
-	if (lpStartupInfo->lpDesktop != nullptr) { __lpDesktop2 = (LPWSTR)malloc(strlen(lpStartupInfo->lpDesktop) * 2); mbstowcs(__lpDesktop2, lpStartupInfo->lpDesktop, strlen(lpStartupInfo->lpDesktop)); }
-	if (lpStartupInfo->lpTitle != nullptr) { __lpTitle2 = (LPWSTR)malloc(strlen(lpStartupInfo->lpTitle) * 2); mbstowcs(__lpTitle2, lpStartupInfo->lpTitle, strlen(lpStartupInfo->lpTitle)); }
-	lpStartupInfo2->lpReserved = __lpReserved2;
-	lpStartupInfo2->lpDesktop = __lpDesktop2;
-	lpStartupInfo2->lpTitle = __lpTitle2;
-	memcpy(lpStartupInfo2, lpStartupInfo, sizeof(STARTUPINFOW));
-	mbstowcs((wchar_t*)lpApplicationName2, (char*)lpApplicationName,4096);
-	mbstowcs((wchar_t*)lpCommandLine2, (char*)lpCommandLine, 4096);
-	mbstowcs((wchar_t*)lpCurrentDirectory2, (char*)lpCurrentDirectory, 4096);
+	LPCWSTR lpApplicationName2 = 0; if (lpApplicationName != nullptr) { lpApplicationName2=(LPCWSTR)malloc(strlen(lpApplicationName) * 2); mbstowcs((wchar_t*)lpApplicationName2, (char*)lpApplicationName,strlen(lpApplicationName)); }
+	LPWSTR lpCommandLine2 = 0; if (lpCommandLine != nullptr) { lpCommandLine2=(LPWSTR)malloc(strlen(lpCommandLine) * 2); mbstowcs((wchar_t*)lpCommandLine2, (char*)lpCommandLine, strlen(lpCommandLine)); }
+	LPCWSTR lpCurrentDirectory2 = 0; if (lpCurrentDirectory != nullptr) { lpCurrentDirectory2=(LPCWSTR)malloc(strlen(lpCurrentDirectory) * 2); mbstowcs((wchar_t*)lpCurrentDirectory2, (char*)lpCurrentDirectory, strlen(lpCurrentDirectory)); }
+	LPSTARTUPINFOW lpStartupInfo2 = 0; if (lpStartupInfo != nullptr) { lpStartupInfo2 = (LPSTARTUPINFOW)malloc(sizeof(STARTUPINFOW)); }
+	LPWSTR __lpReserved2 = 0; if (lpStartupInfo->lpReserved != nullptr) { __lpReserved2 = (LPWSTR)malloc(strlen(lpStartupInfo->lpReserved) * 2); mbstowcs(__lpReserved2, lpStartupInfo->lpReserved, strlen(lpStartupInfo->lpReserved)); }
+	LPWSTR __lpDesktop2 = 0; if (lpStartupInfo->lpDesktop != nullptr) { __lpDesktop2 = (LPWSTR)malloc(strlen(lpStartupInfo->lpDesktop) * 2); mbstowcs(__lpDesktop2, lpStartupInfo->lpDesktop, strlen(lpStartupInfo->lpDesktop)); }
+	LPWSTR __lpTitle2 = 0; if (lpStartupInfo->lpTitle != nullptr) { __lpTitle2 = (LPWSTR)malloc(strlen(lpStartupInfo->lpTitle) * 2); mbstowcs(__lpTitle2, lpStartupInfo->lpTitle, strlen(lpStartupInfo->lpTitle)); }
+	if (lpStartupInfo2 != nullptr) {
+		memcpy(lpStartupInfo2, lpStartupInfo, sizeof(STARTUPINFOW));
+		lpStartupInfo2->lpReserved = __lpReserved2;
+		lpStartupInfo2->lpDesktop = __lpDesktop2;
+		lpStartupInfo2->lpTitle = __lpTitle2;
+	}
 	DWORD ret = MyCreateProcessW(
 		lpApplicationName2,
 		lpCommandLine2,
@@ -648,10 +644,10 @@ DWORD WINAPI MyCreateProcessA(
 		lpStartupInfo2,
 		lpProcessInformation
 	);
-	free((void*)lpApplicationName2);
-	free((void*)lpCommandLine2);
-	free((void*)lpCurrentDirectory2);
-	free((void*)lpStartupInfo2);
+	if (lpApplicationName2 != nullptr) { free((void*)lpApplicationName2); }
+	if (lpCommandLine2 != nullptr) { free((void*)lpCommandLine2); }
+	if (lpCurrentDirectory2 != nullptr) { free((void*)lpCurrentDirectory2); }
+	if (lpStartupInfo2 != nullptr) { free((void*)lpStartupInfo2); }
 	if (__lpReserved2 != nullptr) { free((void*)__lpReserved2); }
 	if (__lpDesktop2 != nullptr) { free((void*)__lpDesktop2); }
 	if (__lpTitle2 != nullptr) { free((void*)__lpTitle2); }
