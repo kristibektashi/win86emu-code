@@ -616,12 +616,23 @@ DWORD WINAPI MyCreateProcessA(
 	__in         DWORD dwCreationFlags,
 	__in_opt     LPVOID lpEnvironment,
 	__in_opt     LPCSTR lpCurrentDirectory,
-	__in         LPSTARTUPINFOW lpStartupInfo,
+	__in         LPSTARTUPINFOA lpStartupInfo,
 	__out        LPPROCESS_INFORMATION lpProcessInformation
 ) {
 	LPCWSTR lpApplicationName2 = (LPCWSTR)malloc(8192);
 	LPWSTR lpCommandLine2 = (LPWSTR)malloc(8192);
 	LPCWSTR lpCurrentDirectory2 = (LPCWSTR)malloc(8192);
+	LPSTARTUPINFOW lpStartupInfo2 = (LPSTARTUPINFOW)malloc(sizeof(STARTUPINFOW));
+	LPWSTR __lpReserved2 = 0;
+	LPWSTR __lpDesktop2 = 0;
+	LPWSTR __lpTitle2 = 0;
+	if (lpStartupInfo->lpReserved != nullptr) { __lpReserved2 = (LPWSTR)malloc(strlen(lpStartupInfo->lpReserved) * 2); mbstowcs(__lpReserved2, lpStartupInfo->lpReserved, strlen(lpStartupInfo->lpReserved)); }
+	if (lpStartupInfo->lpDesktop != nullptr) { __lpDesktop2 = (LPWSTR)malloc(strlen(lpStartupInfo->lpDesktop) * 2); mbstowcs(__lpDesktop2, lpStartupInfo->lpDesktop, strlen(lpStartupInfo->lpDesktop)); }
+	if (lpStartupInfo->lpTitle != nullptr) { __lpTitle2 = (LPWSTR)malloc(strlen(lpStartupInfo->lpTitle) * 2); mbstowcs(__lpTitle2, lpStartupInfo->lpTitle, strlen(lpStartupInfo->lpTitle)); }
+	lpStartupInfo2->lpReserved = __lpReserved2;
+	lpStartupInfo2->lpDesktop = __lpDesktop2;
+	lpStartupInfo2->lpTitle = __lpTitle2;
+	memcpy(lpStartupInfo2, lpStartupInfo, sizeof(STARTUPINFOW));
 	mbstowcs((wchar_t*)lpApplicationName2, (char*)lpApplicationName,4096);
 	mbstowcs((wchar_t*)lpCommandLine2, (char*)lpCommandLine, 4096);
 	mbstowcs((wchar_t*)lpCurrentDirectory2, (char*)lpCurrentDirectory, 4096);
@@ -634,12 +645,16 @@ DWORD WINAPI MyCreateProcessA(
 		dwCreationFlags,
 		lpEnvironment,
 		lpCurrentDirectory2,
-		lpStartupInfo,
+		lpStartupInfo2,
 		lpProcessInformation
 	);
 	free((void*)lpApplicationName2);
 	free((void*)lpCommandLine2);
 	free((void*)lpCurrentDirectory2);
+	free((void*)lpStartupInfo2);
+	if (__lpReserved2 != nullptr) { free((void*)__lpReserved2); }
+	if (__lpDesktop2 != nullptr) { free((void*)__lpDesktop2); }
+	if (__lpTitle2 != nullptr) { free((void*)__lpTitle2); }
 	return ret;
 }
 
