@@ -738,8 +738,9 @@ EMU_EXPORT DWORD EmuExecute(DWORD Addr, int NParams,...)
 			  BX_CPU(0)->gen_reg[BX_32BIT_REG_ESP].dword.erx, BX_CPU(0)->gen_reg[BX_32BIT_REG_EBP].dword.erx, BX_CPU(0)->gen_reg[BX_32BIT_REG_ESI].dword.erx, BX_CPU(0)->gen_reg[BX_32BIT_REG_EDI].dword.erx);
 		printf(" EIP=%08x (%08x)\n", BX_CPU(0)->gen_reg[BX_32BIT_REG_EIP].dword.erx,
 			(unsigned) BX_CPU(0)->prev_rip);		*/
-		if ((UINT8(*(UINT8*)(BX_CPU(0)->gen_reg[BX_32BIT_REG_EIP].dword.erx))) == 0xcd) {
-			UINT8 vector4svc = (UINT8(*(UINT8*)(BX_CPU(0)->gen_reg[BX_32BIT_REG_EIP].dword.erx + 1)));
+#if 1
+		if ((*(UINT8*)(BX_CPU(0)->gen_reg[BX_32BIT_REG_EIP].dword.erx)) == 0xcd) {
+			UINT8 vector4svc = (*(UINT8*)((BX_CPU(0)->gen_reg[BX_32BIT_REG_EIP].dword.erx) + 1));
 			BX_CPU(0)->gen_reg[BX_32BIT_REG_EIP].dword.erx += 2;
 			switch (vector4svc) {
 			case 0x80:
@@ -748,11 +749,17 @@ EMU_EXPORT DWORD EmuExecute(DWORD Addr, int NParams,...)
 			default:
 				break;
 			}
+			BX_CPU(0)->prev_rip = BX_CPU(0)->gen_reg[BX_32BIT_REG_EIP].dword.erx;
 		}
 		else {
 			BX_CPU(0)->activity_state = 0;
-			ExceptExec(BX_CPU(0));
+			BX_CPU(0)->cpu_loop(1);
+			//ExceptExec(BX_CPU(0));
 		}
+#else
+		BX_CPU(0)->activity_state = 0;
+		ExceptExec(BX_CPU(0));
+#endif
 		/*BX_CPU(0)->activity_state = 0;
 		ExceptExec(BX_CPU(0));*/
 		if (bx_pc_system.kill_bochs_request)
