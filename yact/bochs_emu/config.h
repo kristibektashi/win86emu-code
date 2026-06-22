@@ -648,7 +648,7 @@ typedef
 #define BX_ASSERT_ENABLE 0
 
 // limited i440FX PCI support
-#define BX_SUPPORT_PCI 0
+#define BX_SUPPORT_PCI 1
 
 // Bochs VBE display interface
 #define BX_SUPPORT_VBE 0
@@ -657,7 +657,7 @@ typedef
 #define BX_SUPPORT_CLGD54XX 0
 
 // ACPI controller
-#define BX_SUPPORT_ACPI 0
+#define BX_SUPPORT_ACPI 1
 
 #if (BX_SUPPORT_ACPI && !BX_SUPPORT_PCI)
   #error To enable ACPI support, you must also enable PCI
@@ -687,7 +687,7 @@ typedef
 
 //#define BX_SUPPORT_ALIGNMENT_CHECK 1
 #define BX_SUPPORT_FPU 1
-#define BX_SUPPORT_3DNOW 1
+#define BX_SUPPORT_3DNOW 0
 #define BX_SUPPORT_MISALIGNED_SSE 1
 #define BX_SUPPORT_MONITOR_MWAIT 0
 #define BX_SUPPORT_VMX 0

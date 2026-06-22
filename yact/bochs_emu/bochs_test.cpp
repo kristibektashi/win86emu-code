@@ -656,6 +656,9 @@ EMU_EXPORT DWORD EmuExecute(DWORD Addr, int NParams,...)
 		BX_CPU(0)->handleCpuModeChange();
 		//BX_CPU(0)->handleSseModeChange();
 		BX_CPU(0)->trace=0;
+
+		BX_CPU(0)->init_isa_features_bitmask();
+		BX_CPU(0)->set_cpuid_defaults();
 	}
 	CbCallAtThreadExit(ReuseBX_CPU,BX_CPU(0));
 

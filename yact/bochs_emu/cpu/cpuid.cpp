@@ -978,6 +978,7 @@ void BX_CPU_C::init_isa_features_bitmask(void)
   xsave_enabled = SIM->get_param_bool(BXPN_CPUID_XSAVE)->get();
   xapic_enabled = SIM->get_param_bool(BXPN_CPUID_XAPIC)->get();
   sse_enabled = SIM->get_param_enum(BXPN_CPUID_SSE)->get();
+  //printf("sseversion:%d\n", sse_enabled);
 #if BX_SUPPORT_X86_64
   bx_bool fsgsbase_enabled = SIM->get_param_bool(BXPN_CPUID_FSGSBASE)->get();
 #endif
@@ -1011,10 +1012,10 @@ void BX_CPU_C::init_isa_features_bitmask(void)
   }
 
   if (xapic_enabled) {
-     if (! BX_SUPPORT_APIC) {
+     /*if (!BX_SUPPORT_APIC) {
        BX_PANIC(("PANIC: XAPIC enabled when APIC is not compiled in !"));
        return;
-     }
+     }*/
   }
 
   if (sse_enabled) {
