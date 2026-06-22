@@ -232,7 +232,7 @@ extern "C" __declspec(dllexport) DWORD EmuExecute(DWORD Addr, int NParams, ...) 
         return (-1);
     }
 
-    uc_ctl_set_cpu_model(uc, UC_CPU_X86_KNIGHTSMILL);
+    //uc_ctl_set_cpu_model(uc, UC_CPU_X86_KNIGHTSMILL);
 
     //uc_hook_add(uc, &trace1, UC_HOOK_BLOCK, hook_block, NULL, 1, 0);
     uc_hook_add(uc, &trace2, UC_HOOK_CODE, UnicornHookAllCallback, NULL, 0x10000, 0x100000000 - 0x10000 - 0x10000);

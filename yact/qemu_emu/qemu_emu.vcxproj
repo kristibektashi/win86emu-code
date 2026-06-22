@@ -189,6 +189,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalDependencies>tricore-softmmu_arm.lib;sparc-softmmu_arm.lib;sparc64-softmmu_arm.lib;s390x-softmmu_arm.lib;riscv64-softmmu_arm.lib;riscv32-softmmu_arm.lib;ppc-softmmu_arm.lib;ppc64-softmmu_arm.lib;mips-softmmu_arm.lib;mipsel-softmmu_arm.lib;mips64-softmmu_arm.lib;mips64el-softmmu_arm.lib;m68k-softmmu_arm.lib;arm-softmmu_arm.lib;aarch64-softmmu_arm.lib;unicorn-common_arm.lib;unicorn_static_arm.lib;supp.nt_arm.lib;peldr.nt_arm.lib;cbacks.nt_arm.lib;x86_64-softmmu_arm.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>tricore-softmmu_arm.lib;sparc-softmmu_arm.lib;sparc64-softmmu_arm.lib;s390x-softmmu_arm.lib;riscv64-softmmu_arm.lib;riscv32-softmmu_arm.lib;ppc-softmmu_arm.lib;ppc64-softmmu_arm.lib;mips-softmmu_arm.lib;mipsel-softmmu_arm.lib;mips64-softmmu_arm.lib;mips64el-softmmu_arm.lib;m68k-softmmu_arm.lib;arm-softmmu_arm.lib;aarch64-softmmu_arm.lib;unicorn-common_arm.lib;</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
