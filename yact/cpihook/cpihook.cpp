@@ -470,6 +470,10 @@ DWORD WINAPI MyCreateProcessW(
 
 			}
 			//MessageBoxW(0, wchar4tmp2, L"wchar4tmp2", 0);
+			char wchar4tmp24chk[4096];
+			wcstombs(wchar4tmp24chk, wchar4tmp2,4096);
+			FILE* exeexistchk = fopen(wchar4tmp24chk,"rb");
+			if (exeexistchk == NULL) {wcscat(wchar4tmp2,L".EXE"); } else { fclose(exeexistchk); }
 			DWORD Ret = GetModuleFileNameW(CpiHookModule, wchar4tmp, MAX_PATH);
 			wchar_t* Pp = wcsrchr(wchar4tmp, '\\');
 			if (Pp)
@@ -783,8 +787,10 @@ if (iscpwhooktarget==true){
 	* (DWORD*)(JMPCode + 1) = ((DWORD)(&MyCreateProcessA));
 #endif
 #endif
+	VirtualProtect(cpaptx, sizeof(JMPCode), PAGE_EXECUTE_READWRITE, &Tmp);
 	memcpy(JMPCodeOLD2, cpaptx, sizeof(JMPCode));
 	memcpy(cpaptx, JMPCode, sizeof(JMPCode));
+	FlushInstructionCache(GetCurrentProcess(), cpaptx, sizeof(JMPCode));
 }
 
 
