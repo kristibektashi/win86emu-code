@@ -22,6 +22,7 @@
 DWORD JMPPTR4ARM=0;
 
 BYTE JMPCodeOLD[32] = { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
+BYTE JMPCodeOLD2[32] = { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
 BYTE NCFCodeOLD[32] = { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
 BYTE NCFCodeOLD2[32] = { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
 #ifdef _WIN64
@@ -599,6 +600,42 @@ DWORD WINAPI MyCreateProcessW(
 	}
 }
 
+DWORD WINAPI MyCreateProcessA(
+	__in_opt     LPCSTR lpApplicationName,
+	__inout_opt  LPSTR lpCommandLine,
+	__in_opt     LPSECURITY_ATTRIBUTES lpProcessAttributes,
+	__in_opt     LPSECURITY_ATTRIBUTES lpThreadAttributes,
+	__in         BOOL bInheritHandles,
+	__in         DWORD dwCreationFlags,
+	__in_opt     LPVOID lpEnvironment,
+	__in_opt     LPCSTR lpCurrentDirectory,
+	__in         LPSTARTUPINFOW lpStartupInfo,
+	__out        LPPROCESS_INFORMATION lpProcessInformation
+) {
+	LPCWSTR lpApplicationName2 = (LPCWSTR)malloc(8192);
+	LPWSTR lpCommandLine2 = (LPWSTR)malloc(8192);
+	LPCWSTR lpCurrentDirectory2 = (LPCWSTR)malloc(8192);
+	mbstowcs((wchar_t*)lpApplicationName2, (char*)lpApplicationName,4096);
+	mbstowcs((wchar_t*)lpCommandLine2, (char*)lpCommandLine, 4096);
+	mbstowcs((wchar_t*)lpCurrentDirectory2, (char*)lpCurrentDirectory, 4096);
+	DWORD ret = MyCreateProcessW(
+		lpApplicationName2,
+		lpCommandLine2,
+		lpProcessAttributes,
+		lpThreadAttributes,
+		bInheritHandles,
+		dwCreationFlags,
+		lpEnvironment,
+		lpCurrentDirectory2,
+		lpStartupInfo,
+		lpProcessInformation
+	);
+	free((void*)lpApplicationName2);
+	free((void*)lpCommandLine2);
+	free((void*)lpCurrentDirectory2);
+	return ret;
+}
+
 wchar_t lpApplicationName_tmp[4096];
 
 
@@ -622,6 +659,8 @@ void MyCPIHook(DWORD* Arg)
 bool HookInstalled=false;
 bool cpihookx = false;
 
+BYTE* cpaptx;
+
 extern "C" __declspec(dllexport) bool CpiMakeHook()
 {
 	if(HookInstalled)
@@ -642,7 +681,7 @@ extern "C" __declspec(dllexport) bool CpiMakeHook()
 	//BYTE* cpi=(BYTE*)GetProcAddress(HM,"CreateProcessInternalW");
 	cpi = (BYTE*)GetProcAddress(HM, "CreateProcessInternalW");
 	cpi4acc = (BYTE*)GetProcAddress(HM, "CreateProcessInternalW");
-	if (cpi == 0) { cpi = (BYTE*)GetProcAddress(HM, "CreateProcessW"); cpi4acc = (BYTE*)GetProcAddress(HM, "CreateProcessW"); iscpwhooktarget = true; }
+	if (cpi == 0) { cpi = (BYTE*)GetProcAddress(HM, "CreateProcessW"); cpi4acc = (BYTE*)GetProcAddress(HM, "CreateProcessW"); cpaptx = (BYTE*)GetProcAddress(HM, "CreateProcessA"); iscpwhooktarget = true; }
 	if(cpi==0)
 	{
 		HM=LoadLibraryA("kernel32.dll");
@@ -652,7 +691,7 @@ extern "C" __declspec(dllexport) bool CpiMakeHook()
 		//ptr4cpia = (__CreateProcessInternalA)GetProcAddress(HM, "CreateProcessInternalA");
 		cpi=(BYTE*)GetProcAddress(HM,"CreateProcessInternalW");
 		cpi4acc = (BYTE*)GetProcAddress(HM, "CreateProcessInternalW");
-		if (cpi == 0) { cpi = (BYTE*)GetProcAddress(HM, "CreateProcessW"); cpi4acc = (BYTE*)GetProcAddress(HM, "CreateProcessW"); iscpwhooktarget = true; }
+		if (cpi == 0) { cpi = (BYTE*)GetProcAddress(HM, "CreateProcessW"); cpi4acc = (BYTE*)GetProcAddress(HM, "CreateProcessW"); cpaptx = (BYTE*)GetProcAddress(HM, "CreateProcessA"); iscpwhooktarget = true; }
 			//return false;
 	}
 
@@ -732,6 +771,23 @@ ff e0				 jmp		 eax
 	BYTE *thunk=(BYTE*)malloc(sizeof(CBCode));
 	memcpy(thunk,CBCode,sizeof(CBCode));
 #endif
+
+
+if (iscpwhooktarget==true){
+#ifdef _WIN64
+	* (UINT64*)(JMPCode + 2) = ((UINT64)(&MyCreateProcessA));
+#else
+#ifdef _ARM_
+	* (DWORD*)(JMPCode + 4) = 1|((DWORD)(&MyCreateProcessA));
+#else
+	* (DWORD*)(JMPCode + 1) = ((DWORD)(&MyCreateProcessA));
+#endif
+#endif
+	memcpy(JMPCodeOLD2, cpaptx, sizeof(JMPCode));
+	memcpy(cpaptx, JMPCode, sizeof(JMPCode));
+}
+
+
 if (iscpwhooktarget==true){
 #ifdef _WIN64
 	* (UINT64*)(JMPCode + 2) = ((UINT64)(&MyCreateProcessW));
@@ -780,6 +836,7 @@ if (iscpwhooktarget==true){
 //	InterlockedExchange64((volatile LONGLONG*)cpi,*(LONGLONG*)JMPCode);
 	memcpy(JMPCodeOLD,cpi, sizeof(JMPCode));
 	memcpy(cpi,JMPCode, sizeof(JMPCode));
+
 	//printf("cpi:0x%08X\n0x%08X\n%02X%02X%02X%02X\n", (&cpi), (&cpi4acc), (*cpi), (*(cpi + 1)), (*(cpi + 2)), (*(cpi + 3)));
 	//memcpy(cpi,JMPCode,8);
 
