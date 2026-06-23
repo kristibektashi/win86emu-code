@@ -49,10 +49,10 @@ DEFINE_FUNC10(D3DXCompileShaderFromResourceA)
 DEFINE_FUNC10(D3DXCompileShaderFromResourceW)
 DEFINE_FUNC5(D3DXComputeBoundingBox)
 DEFINE_FUNC5(D3DXComputeBoundingSphere)
-DEFINE_FUNC_CB11(D3DXComputeIMTFromPerTexelSignal,9,2)
-DEFINE_FUNC_CB8(D3DXComputeIMTFromPerVertexSignal,6,2)
-DEFINE_FUNC_CB10_2(D3DXComputeIMTFromSignal,6,5,8,2)
-DEFINE_FUNC_CB7(D3DXComputeIMTFromTexture,5,2)
+DEFINE_FUNC_CB11(D3DXComputeIMTFromPerTexelSignal, 9, 2)
+DEFINE_FUNC_CB8(D3DXComputeIMTFromPerVertexSignal, 6, 2)
+DEFINE_FUNC_CB10_2(D3DXComputeIMTFromSignal, 6, 5, 8, 2)
+DEFINE_FUNC_CB7(D3DXComputeIMTFromTexture, 5, 2)
 DEFINE_FUNC6(D3DXComputeNormalMap)
 DEFINE_FUNC2(D3DXComputeNormals)
 DEFINE_FUNC6(D3DXComputeTangent)
@@ -61,7 +61,68 @@ DEFINE_FUNC16(D3DXComputeTangentFrameEx)
 DEFINE_FUNC8(D3DXConcatenateMeshes)
 DEFINE_FUNC5(D3DXConvertMeshSubsetToSingleStrip)
 DEFINE_FUNC7(D3DXConvertMeshSubsetToStrips)
-DEFINE_FUNC5(D3DXCreateAnimationController)
+bool params4keyanimctrleralloced = false;
+DW params4keyanimctrler[] = {
+3,
+1,
+1,
+1,
+1,
+1,
+1,
+6,
+2,
+2,
+1,
+3,
+3,
+4,
+1,
+1,
+3,
+3,
+3,
+3,
+3,
+4,
+3,
+3,
+3,
+2,
+1,
+8,
+8,
+6,
+5,
+7,
+2,
+2,
+1,
+3,
+1,
+3,
+2,
+2,
+3,
+6
+};
+//DEFINE_FUNC5(D3DXCreateAnimationController)
+EXTERN_C DW STUB_IMPORT D3DXCreateAnimationController(DW, DW, DW, DW, DW);
+EXTERN_C DW STUB_EXPORT yact_D3DXCreateAnimationController(DW* R)
+{
+DW r = D3DXCreateAnimationController(p1, p2, p3, p4, p5);
+if (p5 != 0) {
+	if (params4keyanimctrleralloced == false) {
+		for (int cnt = 0; cnt < (sizeof(params4keyanimctrler) / 4); cnt++) {
+			params4keyanimctrler[cnt] = CbCreateNativeStdcallCallback((*(DW*)((*(DW*)(p5)) + (cnt * 4))), params4keyanimctrler[cnt]);
+		}
+		params4keyanimctrleralloced = true;
+	}
+	*(DW*)(p5) = (DW)&params4keyanimctrler;
+}
+LEAVE(5);
+return r;
+}
 DEFINE_FUNC6(D3DXCreateBox)
 DEFINE_FUNC2(D3DXCreateBuffer)
 DEFINE_FUNC8(D3DXCreateCompressedAnimationSet)
@@ -77,31 +138,728 @@ DEFINE_FUNC14(D3DXCreateCubeTextureFromResourceExA)
 DEFINE_FUNC14(D3DXCreateCubeTextureFromResourceExW)
 DEFINE_FUNC4(D3DXCreateCubeTextureFromResourceW)
 DEFINE_FUNC8(D3DXCreateCylinder)
-DEFINE_FUNC9(D3DXCreateEffect)
-DEFINE_FUNC7(D3DXCreateEffectCompiler)
-DEFINE_FUNC6(D3DXCreateEffectCompilerFromFileA)
-DEFINE_FUNC6(D3DXCreateEffectCompilerFromFileW)
-DEFINE_FUNC7(D3DXCreateEffectCompilerFromResourceA)
-DEFINE_FUNC7(D3DXCreateEffectCompilerFromResourceW)
-DEFINE_FUNC10(D3DXCreateEffectEx)
-DEFINE_FUNC8(D3DXCreateEffectFromFileA)
-DEFINE_FUNC9(D3DXCreateEffectFromFileExA)
-DEFINE_FUNC9(D3DXCreateEffectFromFileExW)
-DEFINE_FUNC8(D3DXCreateEffectFromFileW)
-DEFINE_FUNC9(D3DXCreateEffectFromResourceA)
-DEFINE_FUNC10(D3DXCreateEffectFromResourceExA)
-DEFINE_FUNC10(D3DXCreateEffectFromResourceExW)
-DEFINE_FUNC9(D3DXCreateEffectFromResourceW)
-DEFINE_FUNC1(D3DXCreateEffectPool)
-DEFINE_FUNC12(D3DXCreateFontA)
-DEFINE_FUNC3(D3DXCreateFontIndirectA)
-DEFINE_FUNC3(D3DXCreateFontIndirectW)
-DEFINE_FUNC12(D3DXCreateFontW)
-DEFINE_FUNC8(D3DXCreateKeyframedAnimationSet)
-DEFINE_FUNC2(D3DXCreateLine)
-DEFINE_FUNC2(D3DXCreateMatrixStack)
-DEFINE_FUNC6(D3DXCreateMesh)
-DEFINE_FUNC6(D3DXCreateMeshFVF)
+bool params4effectalloced = false;
+DW params4effect[] = {
+3,
+1,
+1,
+2,
+3,
+3,
+3,
+3,
+3,
+3,
+3,
+3,
+2,
+2,
+3,
+3,
+2,
+2,
+3,
+3,
+4,
+4,
+3,
+3,
+4,
+4,
+3,
+3,
+4,
+4,
+3,
+3,
+4,
+4,
+3,
+3,
+4,
+4,
+3,
+3,
+4,
+4,
+4,
+4,
+3,
+3,
+4,
+4,
+4,
+4,
+3,
+3,
+3,
+3,
+3,
+3,
+4,
+2,
+2,
+1,
+2,
+3,
+2,
+3,
+3,
+2,
+1,
+1,
+1,
+2,
+2,
+1,
+1,
+2,
+2,
+1,
+1,
+2,
+2,
+3,
+5
+};
+//DEFINE_FUNC9(D3DXCreateEffect)
+EXTERN_C DW STUB_IMPORT D3DXCreateEffect(DW, DW, DW, DW, DW, DW, DW, DW, DW);
+EXTERN_C DW STUB_EXPORT yact_D3DXCreateEffect(DW* R)
+{
+DW r = D3DXCreateEffect(p1, p2, p3, p4, p5, p6, p7, p8, p9);
+if (p8 != 0) {
+	if (params4effectalloced == false) {
+		for (int cnt = 0; cnt < (sizeof(params4effect) / 4); cnt++) {
+			params4effect[cnt] = CbCreateNativeStdcallCallback((*(DW*)((*(DW*)(p8)) + (cnt * 4))), params4effect[cnt]);
+		}
+		params4effectalloced = true;
+	}
+	*(DW*)(p8) = (DW)&params4effect;
+}
+LEAVE(9);
+return r;
+}
+bool params4effectcompileralloced = false;
+DW params4effectcompiler[] = {
+3,
+1,
+1,
+2,
+3,
+3,
+3,
+3,
+3,
+3,
+3,
+3,
+2,
+2,
+3,
+3,
+2,
+2,
+3,
+3,
+4,
+4,
+3,
+3,
+4,
+4,
+3,
+3,
+4,
+4,
+3,
+3,
+4,
+4,
+3,
+3,
+4,
+4,
+3,
+3,
+4,
+4,
+4,
+4,
+3,
+3,
+4,
+4,
+4,
+4,
+3,
+3,
+3,
+3,
+3,
+3,
+4,
+3,
+3,
+4,
+7
+};
+//DEFINE_FUNC7(D3DXCreateEffectCompiler)
+EXTERN_C DW STUB_IMPORT D3DXCreateEffectCompiler(DW,DW,DW,DW,DW,DW,DW);
+EXTERN_C DW STUB_EXPORT yact_D3DXCreateEffectCompiler(DW *R)
+{
+  DW r= D3DXCreateEffectCompiler(p1,p2,p3,p4,p5,p6,p7);
+  if (p6 != 0) {
+	  if (params4effectcompileralloced == false) {
+		  for (int cnt = 0; cnt < (sizeof(params4effectcompiler) / 4); cnt++) {
+			  params4effectcompiler[cnt] = CbCreateNativeStdcallCallback((*(DW*)((*(DW*)(p6)) + (cnt * 4))), params4effectcompiler[cnt]);
+		  }
+		  params4effectcompileralloced = true;
+	  }
+	  *(DW*)(p6) = (DW)&params4effectcompiler;
+  }
+  LEAVE(7);
+  return r;
+}
+//DEFINE_FUNC6(D3DXCreateEffectCompilerFromFileA)
+EXTERN_C DW STUB_IMPORT D3DXCreateEffectCompilerFromFileA(DW, DW, DW, DW, DW, DW);
+EXTERN_C DW STUB_EXPORT yact_D3DXCreateEffectCompilerFromFileA(DW* R)
+{
+DW r = D3DXCreateEffectCompilerFromFileA(p1, p2, p3, p4, p5, p6);
+if (p5 != 0) {
+	if (params4effectcompileralloced == false) {
+		for (int cnt = 0; cnt < (sizeof(params4effectcompiler) / 4); cnt++) {
+			params4effectcompiler[cnt] = CbCreateNativeStdcallCallback((*(DW*)((*(DW*)(p5)) + (cnt * 4))), params4effectcompiler[cnt]);
+		}
+		params4effectcompileralloced = true;
+	}
+	*(DW*)(p5) = (DW)&params4effectcompiler;
+}
+LEAVE(6);
+return r;
+}
+//DEFINE_FUNC6(D3DXCreateEffectCompilerFromFileW)
+EXTERN_C DW STUB_IMPORT D3DXCreateEffectCompilerFromFileW(DW, DW, DW, DW, DW, DW);
+EXTERN_C DW STUB_EXPORT yact_D3DXCreateEffectCompilerFromFileW(DW* R)
+{
+	DW r = D3DXCreateEffectCompilerFromFileW(p1, p2, p3, p4, p5, p6);
+	if (p5 != 0) {
+		if (params4effectcompileralloced == false) {
+			for (int cnt = 0; cnt < (sizeof(params4effectcompiler) / 4); cnt++) {
+				params4effectcompiler[cnt] = CbCreateNativeStdcallCallback((*(DW*)((*(DW*)(p5)) + (cnt * 4))), params4effectcompiler[cnt]);
+			}
+			params4effectcompileralloced = true;
+		}
+		*(DW*)(p5) = (DW)&params4effectcompiler;
+	}
+	LEAVE(6);
+	return r;
+}
+//DEFINE_FUNC7(D3DXCreateEffectCompilerFromResourceA)
+EXTERN_C DW STUB_IMPORT D3DXCreateEffectCompilerFromResourceA(DW, DW, DW, DW, DW, DW, DW);
+EXTERN_C DW STUB_EXPORT yact_D3DXCreateEffectCompilerFromResourceA(DW* R)
+{
+	DW r = D3DXCreateEffectCompilerFromResourceA(p1, p2, p3, p4, p5, p6, p7);
+	if (p6 != 0) {
+		if (params4effectcompileralloced == false) {
+			for (int cnt = 0; cnt < (sizeof(params4effectcompiler) / 4); cnt++) {
+				params4effectcompiler[cnt] = CbCreateNativeStdcallCallback((*(DW*)((*(DW*)(p6)) + (cnt * 4))), params4effectcompiler[cnt]);
+			}
+			params4effectcompileralloced = true;
+		}
+		*(DW*)(p6) = (DW)&params4effectcompiler;
+	}
+	LEAVE(7);
+	return r;
+}
+//DEFINE_FUNC7(D3DXCreateEffectCompilerFromResourceW)
+EXTERN_C DW STUB_IMPORT D3DXCreateEffectCompilerFromResourceW(DW, DW, DW, DW, DW, DW, DW);
+EXTERN_C DW STUB_EXPORT yact_D3DXCreateEffectCompilerFromResourceW(DW* R)
+{
+	DW r = D3DXCreateEffectCompilerFromResourceW(p1, p2, p3, p4, p5, p6, p7);
+	if (p6 != 0) {
+		if (params4effectcompileralloced == false) {
+			for (int cnt = 0; cnt < (sizeof(params4effectcompiler) / 4); cnt++) {
+				params4effectcompiler[cnt] = CbCreateNativeStdcallCallback((*(DW*)((*(DW*)(p6)) + (cnt * 4))), params4effectcompiler[cnt]);
+			}
+			params4effectcompileralloced = true;
+		}
+		*(DW*)(p6) = (DW)&params4effectcompiler;
+	}
+	LEAVE(7);
+	return r;
+}
+//DEFINE_FUNC10(D3DXCreateEffectEx)
+EXTERN_C DW STUB_IMPORT D3DXCreateEffectEx(DW, DW, DW, DW, DW, DW, DW, DW, DW, DW);
+EXTERN_C DW STUB_EXPORT yact_D3DXCreateEffectEx(DW* R)
+{
+DW r = D3DXCreateEffectEx(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+if (p9 != 0) {
+	if (params4effectalloced == false) {
+		for (int cnt = 0; cnt < (sizeof(params4effect) / 4); cnt++) {
+			params4effect[cnt] = CbCreateNativeStdcallCallback((*(DW*)((*(DW*)(p9)) + (cnt * 4))), params4effect[cnt]);
+		}
+		params4effectalloced = true;
+	}
+	*(DW*)(p9) = (DW)&params4effect;
+}
+LEAVE(10);
+return r;
+}
+//DEFINE_FUNC8(D3DXCreateEffectFromFileA)
+EXTERN_C DW STUB_IMPORT D3DXCreateEffectFromFileA(DW, DW, DW, DW, DW, DW, DW, DW);
+EXTERN_C DW STUB_EXPORT yact_D3DXCreateEffectFromFileA(DW* R)
+{
+DW r = D3DXCreateEffectFromFileA(p1, p2, p3, p4, p5, p6, p7, p8);
+if (p7 != 0) {
+	if (params4effectalloced == false) {
+		for (int cnt = 0; cnt < (sizeof(params4effect) / 4); cnt++) {
+			CbCreateNativeStdcallCallback((*(DW*)((*(DW*)(p7)) + (cnt * 4))), params4effect[cnt]);
+		}
+		params4effectalloced = true;
+	}
+	*(DW*)(p7) = (DW)&params4effect;
+}
+LEAVE(8);
+return r;
+}
+//DEFINE_FUNC9(D3DXCreateEffectFromFileExA)
+EXTERN_C DW STUB_IMPORT D3DXCreateEffectFromFileExA(DW, DW, DW, DW, DW, DW, DW, DW, DW);
+EXTERN_C DW STUB_EXPORT yact_D3DXCreateEffectFromFileExA(DW* R)
+{
+DW r = D3DXCreateEffectFromFileExA(p1, p2, p3, p4, p5, p6, p7, p8, p9);
+if (p8 != 0) {
+	if (params4effectalloced == false) {
+		for (int cnt = 0; cnt < (sizeof(params4effect) / 4); cnt++) {
+			CbCreateNativeStdcallCallback((*(DW*)((*(DW*)(p8)) + (cnt * 4))), params4effect[cnt]);
+		}
+		params4effectalloced = true;
+	}
+	*(DW*)(p8) = (DW)&params4effect;
+}
+LEAVE(9);
+return r;
+}
+//DEFINE_FUNC9(D3DXCreateEffectFromFileExW)
+EXTERN_C DW STUB_IMPORT D3DXCreateEffectFromFileExW(DW, DW, DW, DW, DW, DW, DW, DW, DW);
+EXTERN_C DW STUB_EXPORT yact_D3DXCreateEffectFromFileExW(DW* R)
+{
+DW r = D3DXCreateEffectFromFileExW(p1, p2, p3, p4, p5, p6, p7, p8, p9);
+if (p8 != 0) {
+	if (params4effectalloced == false) {
+		for (int cnt = 0; cnt < (sizeof(params4effect) / 4); cnt++) {
+			CbCreateNativeStdcallCallback((*(DW*)((*(DW*)(p8)) + (cnt * 4))), params4effect[cnt]);
+		}
+		params4effectalloced = true;
+	}
+	*(DW*)(p8) = (DW)&params4effect;
+}
+LEAVE(9);
+return r;
+}
+//DEFINE_FUNC8(D3DXCreateEffectFromFileW)
+EXTERN_C DW STUB_IMPORT D3DXCreateEffectFromFileW(DW, DW, DW, DW, DW, DW, DW, DW);
+EXTERN_C DW STUB_EXPORT yact_D3DXCreateEffectFromFileW(DW* R)
+{
+DW r = D3DXCreateEffectFromFileW(p1, p2, p3, p4, p5, p6, p7, p8);
+if (p7 != 0) {
+	if (params4effectalloced == false) {
+		for (int cnt = 0; cnt < (sizeof(params4effect) / 4); cnt++) {
+			CbCreateNativeStdcallCallback((*(DW*)((*(DW*)(p7)) + (cnt * 4))), params4effect[cnt]);
+		}
+		params4effectalloced = true;
+	}
+	*(DW*)(p7) = (DW)&params4effect;
+}
+LEAVE(8);
+return r;
+}
+//DEFINE_FUNC9(D3DXCreateEffectFromResourceA)
+EXTERN_C DW STUB_IMPORT D3DXCreateEffectFromResourceA(DW, DW, DW, DW, DW, DW, DW, DW, DW);
+EXTERN_C DW STUB_EXPORT yact_D3DXCreateEffectFromResourceA(DW* R)
+{
+DW r = D3DXCreateEffectFromResourceA(p1, p2, p3, p4, p5, p6, p7, p8, p9);
+if (p8 != 0) {
+	if (params4effectalloced == false) {
+		for (int cnt = 0; cnt < (sizeof(params4effect) / 4); cnt++) {
+			params4effect[cnt] = CbCreateNativeStdcallCallback((*(DW*)((*(DW*)(p8)) + (cnt * 4))), params4effect[cnt]);
+		}
+		params4effectalloced = true;
+	}
+	*(DW*)(p8) = (DW)&params4effect;
+}
+LEAVE(9);
+return r;
+}
+//DEFINE_FUNC10(D3DXCreateEffectFromResourceExA)
+EXTERN_C DW STUB_IMPORT D3DXCreateEffectFromResourceExA(DW, DW, DW, DW, DW, DW, DW, DW, DW, DW);
+EXTERN_C DW STUB_EXPORT yact_D3DXCreateEffectFromResourceExA(DW* R)
+{
+DW r = D3DXCreateEffectFromResourceExA(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+if (p9 != 0) {
+	if (params4effectalloced == false) {
+		for (int cnt = 0; cnt < (sizeof(params4effect) / 4); cnt++) {
+			CbCreateNativeStdcallCallback((*(DW*)((*(DW*)(p9)) + (cnt * 4))), params4effect[cnt]);
+		}
+		params4effectalloced = true;
+	}
+	*(DW*)(p9) = (DW)&params4effect;
+}
+LEAVE(10);
+return r;
+}
+//DEFINE_FUNC10(D3DXCreateEffectFromResourceExW)
+EXTERN_C DW STUB_IMPORT D3DXCreateEffectFromResourceExW(DW, DW, DW, DW, DW, DW, DW, DW, DW, DW);
+EXTERN_C DW STUB_EXPORT yact_D3DXCreateEffectFromResourceExW(DW* R)
+{
+DW r = D3DXCreateEffectFromResourceExW(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+if (p9 != 0) {
+	if (params4effectalloced == false) {
+		for (int cnt = 0; cnt < (sizeof(params4effect) / 4); cnt++) {
+			CbCreateNativeStdcallCallback((*(DW*)((*(DW*)(p9)) + (cnt * 4))), params4effect[cnt]);
+		}
+		params4effectalloced = true;
+	}
+	*(DW*)(p9) = (DW)&params4effect;
+}
+LEAVE(10);
+return r;
+}
+//DEFINE_FUNC9(D3DXCreateEffectFromResourceW)
+EXTERN_C DW STUB_IMPORT D3DXCreateEffectFromResourceW(DW, DW, DW, DW, DW, DW, DW, DW, DW);
+EXTERN_C DW STUB_EXPORT yact_D3DXCreateEffectFromResourceW(DW* R)
+{
+DW r = D3DXCreateEffectFromResourceW(p1, p2, p3, p4, p5, p6, p7, p8, p9);
+if (p8 != 0) {
+	if (params4effectalloced == false) {
+		for (int cnt = 0; cnt < (sizeof(params4effect) / 4); cnt++) {
+			params4effect[cnt] = CbCreateNativeStdcallCallback((*(DW*)((*(DW*)(p8)) + (cnt * 4))), params4effect[cnt]);
+		}
+		params4effectalloced = true;
+	}
+	*(DW*)(p8) = (DW)&params4effect;
+}
+LEAVE(9);
+return r;
+}
+bool params4effect_poolalloced = false;
+DW params4effect_pool[] = {
+3,
+1,
+1
+};
+//DEFINE_FUNC1(D3DXCreateEffectPool)
+EXTERN_C DW STUB_IMPORT D3DXCreateEffectPool(DW);
+EXTERN_C DW STUB_EXPORT yact_D3DXCreateEffectPool(DW* R)
+{
+DW r = D3DXCreateEffectPool(p1);
+if (p1 != 0) {
+	if (params4effect_poolalloced == false) {
+		for (int cnt = 0; cnt < (sizeof(params4effect_pool) / 4); cnt++) {
+			params4effect_pool[cnt] = CbCreateNativeStdcallCallback((*(DW*)((*(DW*)(p1)) + (cnt * 4))), params4effect_pool[cnt]);
+		}
+		params4effect_poolalloced = true;
+	}
+	*(DW*)(p1) = (DW)&params4effect_pool;
+}
+LEAVE(1);
+return r;
+}
+bool params4fontalloced = false;
+DW params4font[] = {
+3,
+1,
+1,
+2,
+2,
+2,
+2,
+2,
+1,
+5,
+3,
+3,
+3,
+3,
+7,
+7,
+1,
+1
+};
+//DEFINE_FUNC12(D3DXCreateFontA)
+EXTERN_C DW STUB_IMPORT D3DXCreateFontA(DW, DW, DW, DW, DW, DW, DW, DW, DW, DW, DW, DW);
+EXTERN_C DW STUB_EXPORT yact_D3DXCreateFontA(DW* R)
+{
+DW r = D3DXCreateFontA(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
+if (p12 != 0) {
+	if (params4fontalloced == false) {
+		for (int cnt = 0; cnt < (sizeof(params4font) / 4); cnt++) {
+			params4font[cnt] = CbCreateNativeStdcallCallback((*(DW*)((*(DW*)(p12)) + (cnt * 4))), params4font[cnt]);
+		}
+		params4fontalloced = true;
+	}
+	*(DW*)(p12) = (DW)&params4font;
+}
+LEAVE(12);
+return r;
+}
+//DEFINE_FUNC3(D3DXCreateFontIndirectA)
+EXTERN_C DW STUB_IMPORT D3DXCreateFontIndirectA(DW, DW, DW);
+EXTERN_C DW STUB_EXPORT yact_D3DXCreateFontIndirectA(DW* R)
+{
+DW r = D3DXCreateFontIndirectA(p1, p2, p3);
+if (p3 != 0) {
+	if (params4fontalloced == false) {
+		for (int cnt = 0; cnt < (sizeof(params4font) / 4); cnt++) {
+			params4font[cnt] = CbCreateNativeStdcallCallback((*(DW*)((*(DW*)(p3)) + (cnt * 4))), params4font[cnt]);
+		}
+		params4fontalloced = true;
+	}
+	*(DW*)(p3) = (DW)&params4font;
+}
+LEAVE(3);
+return r;
+}
+//DEFINE_FUNC3(D3DXCreateFontIndirectW)
+EXTERN_C DW STUB_IMPORT D3DXCreateFontIndirectW(DW, DW, DW);
+EXTERN_C DW STUB_EXPORT yact_D3DXCreateFontIndirectW(DW* R)
+{
+DW r = D3DXCreateFontIndirectW(p1, p2, p3);
+if (p3 != 0) {
+	if (params4fontalloced == false) {
+		for (int cnt = 0; cnt < (sizeof(params4font) / 4); cnt++) {
+			params4font[cnt] = CbCreateNativeStdcallCallback((*(DW*)((*(DW*)(p3)) + (cnt * 4))), params4font[cnt]);
+		}
+		params4fontalloced = true;
+	}
+	*(DW*)(p3) = (DW)&params4font;
+}
+LEAVE(3);
+return r;
+}
+//DEFINE_FUNC12(D3DXCreateFontW)
+EXTERN_C DW STUB_IMPORT D3DXCreateFontW(DW, DW, DW, DW, DW, DW, DW, DW, DW, DW, DW, DW);
+EXTERN_C DW STUB_EXPORT yact_D3DXCreateFontW(DW* R)
+{
+DW r = D3DXCreateFontW(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
+if (p12 != 0) {
+	if (params4fontalloced == false) {
+		for (int cnt = 0; cnt < (sizeof(params4font) / 4); cnt++) {
+			params4font[cnt] = CbCreateNativeStdcallCallback((*(DW*)((*(DW*)(p12)) + (cnt * 4))), params4font[cnt]);
+		}
+		params4fontalloced = true;
+	}
+	*(DW*)(p12) = (DW)&params4font;
+}
+LEAVE(12);
+return r;
+}
+bool params4keyframedanimalloced = false;
+DW params4keyframedanim[] = {
+3,
+1,
+1,
+1,
+1,
+3,
+1,
+3,
+3,
+7,
+6,
+1,
+1,
+2,
+3,
+4,
+4,
+2,
+3,
+4,
+4,
+2,
+3,
+4,
+4,
+1,
+2,
+3,
+3,
+3,
+3,
+3,
+9,
+5,
+2
+};
+//DEFINE_FUNC8(D3DXCreateKeyframedAnimationSet)
+EXTERN_C DW STUB_IMPORT D3DXCreateKeyframedAnimationSet(DW, DW, DW, DW, DW, DW, DW, DW);
+EXTERN_C DW STUB_EXPORT yact_D3DXCreateKeyframedAnimationSet(DW* R)
+{
+DW r = D3DXCreateKeyframedAnimationSet(p1, p2, p3, p4, p5, p6, p7, p8);
+if (p2 != 0) {
+	if (params4keyframedanimalloced == false) {
+		for (int cnt = 0; cnt < (sizeof(params4keyframedanim) / 4); cnt++) {
+			params4keyframedanim[cnt] = CbCreateNativeStdcallCallback((*(DW*)((*(DW*)(p8)) + (cnt * 4))), params4keyframedanim[cnt]);
+		}
+		params4keyframedanimalloced = true;
+	}
+	*(DW*)(p2) = (DW)&params4keyframedanim;
+}
+LEAVE(8);
+return r;
+}
+bool params4linealloced = false;
+DW params4line[] = {
+3,
+1,
+1,
+2,
+1,
+4,
+5,
+2,
+1,
+2,
+1,
+2,
+1,
+2,
+1,
+2,
+1,
+1,
+1,
+1
+};
+//DEFINE_FUNC2(D3DXCreateLine)
+EXTERN_C DW STUB_IMPORT D3DXCreateLine(DW, DW);
+EXTERN_C DW STUB_EXPORT yact_D3DXCreateLine(DW* R)
+{
+DW r = D3DXCreateLine(p1, p2);
+if (p2 != 0) {
+	if (params4linealloced == false) {
+		for (int cnt = 0; cnt < (sizeof(params4line) / 4); cnt++) {
+			params4line[cnt] = CbCreateNativeStdcallCallback((*(DW*)((*(DW*)(p2)) + (cnt * 4))), params4line[cnt]);
+		}
+		params4linealloced = true;
+	}
+	*(DW*)(p2) = (DW)&params4line;
+}
+LEAVE(2);
+return r;
+}
+bool params4matrixalloced = false;
+DW params4matrix[] = {
+3,
+1,
+1,
+1,
+2,
+2,
+2,
+1,
+1,
+3,
+3,
+4,
+4,
+4,
+4,
+4,
+4,
+1
+};
+//DEFINE_FUNC2(D3DXCreateMatrixStack)
+EXTERN_C DW STUB_IMPORT D3DXCreateMatrixStack(DW, DW);
+EXTERN_C DW STUB_EXPORT yact_D3DXCreateMatrixStack(DW* R)
+{
+DW r = D3DXCreateMatrixStack(p1, p2);
+if (p2 != 0) {
+	if (params4matrixalloced == false) {
+		for (int cnt = 0; cnt < (sizeof(params4matrix) / 4); cnt++) {
+			params4matrix[cnt] = CbCreateNativeStdcallCallback((*(DW*)((*(DW*)(p2)) + (cnt * 4))), params4matrix[cnt]);
+		}
+		params4matrixalloced = true;
+	}
+	*(DW*)(p2) = (DW)&params4matrix;
+}
+LEAVE(2);
+return r;
+}
+bool params4meshalloced = false;
+DW params4mesh[] = {
+3,
+1,
+1,
+
+2,
+1,
+1,
+1,
+
+2,
+1,
+1,
+2,
+
+5,
+5,
+2,
+2,
+
+3,
+1,
+3,
+1,
+
+3,
+3,
+3,
+3,
+
+2,
+3,
+1,
+7,
+
+6,
+3
+
+};
+//DEFINE_FUNC6(D3DXCreateMesh)
+EXTERN_C DW STUB_IMPORT D3DXCreateMesh(DW, DW, DW, DW, DW, DW);
+EXTERN_C DW STUB_EXPORT yact_D3DXCreateMesh(DW* R)
+{
+DW r = D3DXCreateMesh(p1, p2, p3, p4, p5, p6);
+if (p6 != 0) {
+	if (params4meshalloced == false) {
+		for (int cnt = 0; cnt < (sizeof(params4mesh) / 4); cnt++) {
+			params4mesh[cnt] = CbCreateNativeStdcallCallback((*(DW*)((*(DW*)(p6)) + (cnt * 4))), params4mesh[cnt]);
+		}
+		params4meshalloced = true;
+	}
+	*(DW*)(p6) = (DW)&params4mesh;
+}
+LEAVE(6);
+return r;
+}
+//DEFINE_FUNC6(D3DXCreateMeshFVF)
+EXTERN_C DW STUB_IMPORT D3DXCreateMeshFVF(DW, DW, DW, DW, DW, DW);
+EXTERN_C DW STUB_EXPORT yact_D3DXCreateMeshFVF(DW* R)
+{
+DW r = D3DXCreateMeshFVF(p1, p2, p3, p4, p5, p6);
+if (p6 != 0) {
+	if (params4meshalloced == false) {
+		for (int cnt = 0; cnt < (sizeof(params4mesh) / 4); cnt++) {
+			params4mesh[cnt] = CbCreateNativeStdcallCallback((*(DW*)((*(DW*)(p6)) + (cnt * 4))), params4mesh[cnt]);
+		}
+		params4meshalloced = true;
+	}
+	*(DW*)(p6) = (DW)&params4mesh;
+}
+LEAVE(6);
+return r;
+}
 DEFINE_FUNC2(D3DXCreateNPatchMesh)
 DEFINE_FUNC7(D3DXCreatePMeshFromStream)
 DEFINE_FUNC4(D3DXCreatePRTBuffer)
@@ -196,9 +954,41 @@ DEFINE_FUNC8(D3DXLoadMeshFromXA)
 DEFINE_FUNC9(D3DXLoadMeshFromXInMemory)
 DEFINE_FUNC10(D3DXLoadMeshFromXResource)
 DEFINE_FUNC8(D3DXLoadMeshFromXW)
-DEFINE_FUNC8(D3DXLoadMeshFromXof)
+//DEFINE_FUNC8(D3DXLoadMeshFromXof)
+EXTERN_C DW STUB_IMPORT D3DXLoadMeshFromXof(DW, DW, DW, DW, DW, DW, DW, DW);
+EXTERN_C DW STUB_EXPORT yact_D3DXLoadMeshFromXof(DW* R)
+{
+DW r = D3DXLoadMeshFromXof(p1, p2, p3, p4, p5, p6, p7, p8);
+if (p8 != 0) {
+	if (params4meshalloced == false) {
+		for (int cnt = 0; cnt < (sizeof(params4mesh) / 4); cnt++) {
+			params4mesh[cnt] = CbCreateNativeStdcallCallback((*(DW*)((*(DW*)(p8)) + (cnt * 4))), params4mesh[cnt]);
+		}
+		params4meshalloced = true;
+	}
+	*(DW*)(p8) = (DW)&params4mesh;
+}
+LEAVE(8);
+return r;
+}
 DEFINE_FUNC7(D3DXLoadMeshHierarchyFromXA)
-DEFINE_FUNC8(D3DXLoadMeshHierarchyFromXInMemory)
+//DEFINE_FUNC8(D3DXLoadMeshHierarchyFromXInMemory)
+EXTERN_C DW STUB_IMPORT D3DXLoadMeshHierarchyFromXInMemory(DW, DW, DW, DW, DW, DW, DW, DW);
+EXTERN_C DW STUB_EXPORT yact_D3DXLoadMeshHierarchyFromXInMemory(DW* R)
+{
+DW r = D3DXLoadMeshHierarchyFromXInMemory(p1, p2, p3, p4, p5, p6, p7, p8);
+if (p8 != 0) {
+	if (params4meshalloced == false) {
+		for (int cnt = 0; cnt < (sizeof(params4mesh) / 4); cnt++) {
+			params4mesh[cnt] = CbCreateNativeStdcallCallback((*(DW*)((*(DW*)(p8)) + (cnt * 4))), params4mesh[cnt]);
+		}
+		params4meshalloced = true;
+	}
+	*(DW*)(p8) = (DW)&params4mesh;
+}
+LEAVE(8);
+return r;
+}
 DEFINE_FUNC7(D3DXLoadMeshHierarchyFromXW)
 DEFINE_FUNC2(D3DXLoadPRTBufferFromFileA)
 DEFINE_FUNC2(D3DXLoadPRTBufferFromFileW)

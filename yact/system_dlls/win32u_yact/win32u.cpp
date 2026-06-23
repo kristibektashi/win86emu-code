@@ -693,3 +693,10 @@ SVC_(UserSetScrollBarInfo, 3)
 // For Wine DX
 SVC_(GdiDdDDICreateDCFromMemory, 1)
 SVC_(GdiDdDDIDestroyDCFromMemory, 1)
+
+
+/*DEFINE_FUNC2(NtDCompositionSetBlurredWallpaperSurface)
+DEFINE_FUNC9(NtDCompositionRegisterThumbnailVisual)
+DEFINE_FUNC3(NtDCompositionRegisterVirtualDesktopVisual)
+DEFINE_FUNC2(NtDCompositionSetChildRootVisual)
+DEFINE_FUNC2(NtDCompositionDuplicateSwapchainHandleToDwm)*/
