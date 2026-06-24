@@ -1167,6 +1167,7 @@ if (iscpwhooktarget==true){
 		VirtualProtect(cpi2, sizeof(JMPCode), PAGE_EXECUTE_READWRITE, &Tmp);
 		memcpy(JMPCodeOLD3, cpi2, sizeof(JMPCode));
 		memcpy(cpi2, JMPCode3, sizeof(JMPCode));
+		FlushInstructionCache(GetCurrentProcess(), cpi2, sizeof(JMPCode));
 	}
 
 	//printf("cpi:0x%08X\n0x%08X\n%02X%02X%02X%02X\n", (&cpi), (&cpi4acc), (*cpi), (*(cpi + 1)), (*(cpi + 2)), (*(cpi + 3)));
@@ -1175,7 +1176,6 @@ if (iscpwhooktarget==true){
 	/*VirtualProtect(thunk, sizeof(CBCode), PAGE_EXECUTE_READWRITE, &Tmp);
 	FlushInstructionCache(GetCurrentProcess(),thunk,sizeof(CBCode));*/
 	FlushInstructionCache(GetCurrentProcess(),cpi,sizeof(JMPCode));
-	FlushInstructionCache(GetCurrentProcess(), cpi2, sizeof(JMPCode));
 
 	return true;
 }
