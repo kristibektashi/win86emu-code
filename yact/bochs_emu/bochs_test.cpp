@@ -696,7 +696,15 @@ EMU_EXPORT DWORD EmuExecute(DWORD Addr, int NParams,...)
 		printf(" EIP=%08x (%08x)\n", BX_CPU(0)->gen_reg[BX_32BIT_REG_EIP].dword.erx,
 			(unsigned) BX_CPU(0)->prev_rip);		*/
 		BX_CPU(0)->activity_state=0;
-		ExceptExec(BX_CPU(0));
+		//ExceptExec(BX_CPU(0));
+		//bxICacheEntry_c* entry = BX_CPU(0)->getICacheEntry();
+
+		//bxInstruction_c* i = entry->i;
+		bxInstruction_c* i = (BX_CPU(0)->getICacheEntry())->i;
+		(BX_CPU(0)->gen_reg[BX_32BIT_REG_EIP].dword.erx) += i->ilen();
+		(BX_CPU(0)->*((BxExecutePtr_tR)(i->execute)))(i);
+		BX_CPU(0)->prev_rip = (BX_CPU(0)->gen_reg[BX_32BIT_REG_EIP].dword.erx);
+		BX_TICK1_IF_SINGLE_PROCESSOR();
 		if (bx_pc_system.kill_bochs_request)
 			break;
 		if(CbIsReturnToHost(BX_CPU(0)->gen_reg[BX_32BIT_REG_EIP].dword.erx))
