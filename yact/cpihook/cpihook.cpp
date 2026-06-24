@@ -1158,14 +1158,16 @@ if (iscpwhooktarget==true){
 	memcpy(NCFCodeOLD, ncf, sizeof(JMPCode));
 
 	VirtualProtect(cpi,sizeof(JMPCode),PAGE_EXECUTE_READWRITE,&Tmp);
-	VirtualProtect(cpi2, sizeof(JMPCode), PAGE_EXECUTE_READWRITE, &Tmp);
 
 //	InterlockedExchange64((volatile LONGLONG*)cpi,*(LONGLONG*)JMPCode);
 	memcpy(JMPCodeOLD,cpi, sizeof(JMPCode));
 	memcpy(cpi,JMPCode, sizeof(JMPCode));
 
-	memcpy(JMPCodeOLD3, cpi2, sizeof(JMPCode));
-	memcpy(cpi2, JMPCode3, sizeof(JMPCode));
+	if (cpi2 != nullptr) {
+		VirtualProtect(cpi2, sizeof(JMPCode), PAGE_EXECUTE_READWRITE, &Tmp);
+		memcpy(JMPCodeOLD3, cpi2, sizeof(JMPCode));
+		memcpy(cpi2, JMPCode3, sizeof(JMPCode));
+	}
 
 	//printf("cpi:0x%08X\n0x%08X\n%02X%02X%02X%02X\n", (&cpi), (&cpi4acc), (*cpi), (*(cpi + 1)), (*(cpi + 2)), (*(cpi + 3)));
 	//memcpy(cpi,JMPCode,8);
