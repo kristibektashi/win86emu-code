@@ -288,7 +288,7 @@ DWORD WINAPI MyCreateProcessInternalW(
 	DWORD ret;
 	memcpy(cpi, JMPCodeOLD, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode));
 	wchar_t windowsdir[1024] = L"";
-	DWORD Ret = GetModuleFileNameW(0, windowsdir, 1024);
+	DWORD Ret = GetModuleFileNameW(CpiHookModule, windowsdir, 1024);
 	wchar_t* windowsdir2 = wcsrchr(windowsdir, '\\');
 	wchar_t windowsdir3[2048] = L"";
 	const wchar_t windowsdirtmp[128] = L"\\execveapp.exe";
