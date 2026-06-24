@@ -29,12 +29,6 @@ BYTE NCFCodeOLD[32] = { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x
 BYTE NCFCodeOLD2[32] = { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
 BYTE NCFCodeOLD3[32] = { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
 BYTE NCFCodeOLD4[32] = { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
-#ifdef _WIN64
-BYTE JMPCode[] = { 0xFF, 0x25, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88 };
-BYTE JMPCode2[] = { 0xFF, 0x25, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88 };
-BYTE JMPCode3[] = { 0xFF, 0x25, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88 };
-BYTE JMPCode4[] = { 0xFF, 0x25, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88 };
-#else
 #ifdef _ARM_
 BYTE JMPCode[] = { 0xDF, 0xF8, 0, 0xF0, 0x11, 0x22, 0x33, 0x44 };
 BYTE JMPCode2[] = { 0xDF, 0xF8, 0, 0xF0, 0x11, 0x22, 0x33, 0x44 };
@@ -46,11 +40,11 @@ BYTE JMPCode2[] = { 0xb8,0xcc,0xcc,0xcc, 0xcc,0xff,0xe0,0xcc };
 BYTE JMPCode3[] = { 0xb8,0xcc,0xcc,0xcc, 0xcc,0xff,0xe0,0xcc };
 BYTE JMPCode4[] = { 0xb8,0xcc,0xcc,0xcc, 0xcc,0xff,0xe0,0xcc };
 #endif
-#endif
 BYTE* cpi;
 BYTE* cpi2;
 BYTE* cpi4acc;
 BYTE* cpi4acc2;
+
 
 BYTE* ncf;
 
@@ -106,8 +100,7 @@ typedef DWORD(WINAPI* __CreateProcessA)(
 	__in         LPSTARTUPINFOA lpStartupInfo,
 	__out        LPPROCESS_INFORMATION lpProcessInformation
 	);
-
-typedef DWORD (WINAPI* __CreateProcessAsUserA)(
+typedef DWORD(WINAPI* __CreateProcessAsUserA)(
 	HANDLE                hToken,
 	LPCSTR                lpApplicationName,
 	LPSTR                 lpCommandLine,
@@ -119,9 +112,8 @@ typedef DWORD (WINAPI* __CreateProcessAsUserA)(
 	LPCSTR                lpCurrentDirectory,
 	LPSTARTUPINFOA        lpStartupInfo,
 	LPPROCESS_INFORMATION lpProcessInformation
-);
-
-typedef DWORD (WINAPI* __CreateProcessAsUserW)(
+	);
+typedef DWORD(WINAPI* __CreateProcessAsUserW)(
 	HANDLE                hToken,
 	LPCWSTR               lpApplicationName,
 	LPWSTR                lpCommandLine,
@@ -133,7 +125,10 @@ typedef DWORD (WINAPI* __CreateProcessAsUserW)(
 	LPCWSTR               lpCurrentDirectory,
 	LPSTARTUPINFOW        lpStartupInfo,
 	LPPROCESS_INFORMATION lpProcessInformation
-);
+	);
+
+__CreateProcessAsUserW ptr4cpauw;
+__CreateProcessAsUserA ptr4cpaua;
 
 __CreateProcessW ptr4cpi;
 __CreateProcessW ptr4cpi2;
@@ -141,9 +136,6 @@ __CreateProcessW ptr4cpi3;
 __CreateProcessInternalA ptr4cpia;
 __CreateProcessA ptr4cpia2;
 __CreateProcessA ptr4cpia3;
-
-__CreateProcessAsUserW ptr4cpauw;
-__CreateProcessAsUserA ptr4cpaua;
 
 wchar_t wchar4tmp[4096];
 wchar_t wchar4tmp2[4096];
@@ -294,10 +286,9 @@ DWORD WINAPI MyCreateProcessInternalW(
 ) {
 	//MessageBoxW(0, L"Test!", L"", 0);
 	DWORD ret;
-	memcpy(NCFCodeOLD2, ncf, sizeof(JMPCode)); memcpy(ncf, NCFCodeOLD, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), ncf, sizeof(JMPCode));
 	memcpy(cpi, JMPCodeOLD, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode));
 	wchar_t windowsdir[1024] = L"";
-	DWORD Ret = GetModuleFileNameW(CpiHookModule, windowsdir, 1024);
+	DWORD Ret = GetModuleFileNameW(0, windowsdir, 1024);
 	wchar_t* windowsdir2 = wcsrchr(windowsdir, '\\');
 	wchar_t windowsdir3[2048] = L"";
 	const wchar_t windowsdirtmp[128] = L"\\execveapp.exe";
@@ -308,10 +299,29 @@ DWORD WINAPI MyCreateProcessInternalW(
 	char windowsdirtmp2x[1024];
 	wcstombs(windowsdirtmp2x, windowsdirtmp2, 1024);
 	//MessageBoxW(0, windowsdirtmp2, L"", 0);
-	FILE* fp4chkbak = 0;
 	FILE* fp4chk = fopen((char*)windowsdirtmp2x, "r");
-	{
-		if (fp4chk != nullptr) { fp4chkbak = fp4chk; fclose(fp4chk); fp4chk = fp4chkbak; }
+	if (fp4chk != 0) {
+		fclose(fp4chk);
+		if (((wchar_t*)lpApplicationName) != 0) {
+			wcscat_s(windowsdir3, windowsdirtmp2);
+			wcscat_s(windowsdir3, L" ");
+			wcscat_s(windowsdir3, L"\"");
+			wcscat_s(windowsdir3, ((wchar_t*)lpApplicationName));
+			wcscat_s(windowsdir3, L"\"");
+			wcscat_s(windowsdir3, ((wchar_t*)lpCommandLine) + wcslen(((wchar_t*)lpApplicationName)));
+			ret = ((__CreateProcessInternalW)cpi4acc)(unknown1, windowsdirtmp2, windowsdir3, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation, unknown2);
+			memcpy(cpi, JMPCode, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode)); return ret;
+		}
+		else {
+			wcscat_s(windowsdir3, windowsdirtmp2);
+			wcscat_s(windowsdir3, L" ");
+			wcscat_s(windowsdir3, ((wchar_t*)lpCommandLine));
+			ret = ((__CreateProcessInternalW)cpi4acc)(unknown1, windowsdirtmp2, windowsdir3, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation, unknown2);
+			memcpy(cpi, JMPCode, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode)); return ret;
+		}
+	}
+	else {
+		if (fp4chk != nullptr) { fclose(fp4chk); }
 		/*if (lpCommandLine != nullptr) { MessageBoxW(0, lpCommandLine, L"lpCommandLine", 0); }
 		if (lpApplicationName != nullptr) { MessageBoxW(0, lpApplicationName,L"lpApplicationName" , 0); }*/
 		//if (ptr4cpi == NULL) { ptr4cpi = ptr4cpi2; }
@@ -339,47 +349,21 @@ DWORD WINAPI MyCreateProcessInternalW(
 				*Pp = 0;
 			if (PeLdrIsValidX86(wchar4tmp2) > 0) { SetEnvironmentVariable(L"EMU_PROGRAM", wchar4tmp2); wcsncat(wchar4tmp, L"\\peloader.exe ", 15); }
 			else if (PeLdrIsValidX86(wchar4tmp2) != 0) { SetEnvironmentVariable(L"EMU_PROGRAM", wchar4tmp2); wcsncat(wchar4tmp, L"\\peloaderc.exe ", 16); }
-			else if (fp4chk != 0) {
-					//fclose(fp4chk);
-					if (((wchar_t*)lpApplicationName) != 0) {
-						wcscat_s(windowsdir3, windowsdirtmp2);
-						wcscat_s(windowsdir3, L" ");
-						wcscat_s(windowsdir3, L"\"");
-						wcscat_s(windowsdir3, ((wchar_t*)lpApplicationName));
-						wcscat_s(windowsdir3, L"\"");
-						wcscat_s(windowsdir3, ((wchar_t*)lpCommandLine) + wcslen(((wchar_t*)lpApplicationName)));
-						ret = ((__CreateProcessInternalW)cpi4acc)(unknown1, windowsdirtmp2, windowsdir3, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation, unknown2);
-						memcpy(ncf, NCFCodeOLD2, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), ncf, sizeof(JMPCode));
-						memcpy(cpi, JMPCode, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode)); return ret;
-					}
-					else {
-						wcscat_s(windowsdir3, windowsdirtmp2);
-						wcscat_s(windowsdir3, L" ");
-						wcscat_s(windowsdir3, ((wchar_t*)lpCommandLine));
-						ret = ((__CreateProcessInternalW)cpi4acc)(unknown1, windowsdirtmp2, windowsdir3, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation, unknown2);
-						memcpy(ncf, NCFCodeOLD2, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), ncf, sizeof(JMPCode));
-						memcpy(cpi, JMPCode, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode)); return ret;
-					}
-				}
-				else { ret = ((__CreateProcessInternalW)cpi4acc)(unknown1, lpApplicationName, lpCommandLine, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation, unknown2); memcpy(ncf, NCFCodeOLD2, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), ncf, sizeof(JMPCode)); memcpy(cpi, JMPCode, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode)); return ret; }
+			else { ret = ((__CreateProcessInternalW)cpi4acc)(unknown1, lpApplicationName, lpCommandLine, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation, unknown2); memcpy(cpi, JMPCode, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode)); return ret; }
 			wcsncpy(wchar4tmp5, wchar4tmp, wcslen(wchar4tmp));
-			if (wcslen(wchar4tmp) != 0) { wchar4tmp5[wcslen(wchar4tmp) - 1] = 0; }
-			else { wchar4tmp5[0] = 0; }
+			if (wcslen(wchar4tmp) != 0) { wchar4tmp5[wcslen(wchar4tmp) - 1] = 0; } else { wchar4tmp5[0] = 0; }
 			wcsncat(wchar4tmp, wchar4tmp4, cnt4cpi3);
 			//MessageBoxW(0, wchar4tmp, L"wchar4tmp", 0);
 			//MessageBoxW(0, lpApplicationName, L"lpApplicationName", 0);
 			if (lpApplicationName == nullptr) {
 				ret = ((__CreateProcessInternalW)cpi4acc)(unknown1, lpApplicationName, wchar4tmp, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation, unknown2);
-			}
-			else {
+			} else {
 				if (lpApplicationName == L"") {
 					ret = ((__CreateProcessInternalW)cpi4acc)(unknown1, lpApplicationName, wchar4tmp, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation, unknown2);
-				}
-				else {
+				} else {
 					ret = ((__CreateProcessInternalW)cpi4acc)(unknown1, wchar4tmp5, wchar4tmp, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation, unknown2);
 				}
 			}
-			memcpy(ncf, NCFCodeOLD2, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), ncf, sizeof(JMPCode));
 			memcpy(cpi, JMPCode, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode)); return ret;
 		}
 		if (lpApplicationName != nullptr) {
@@ -392,73 +376,20 @@ DWORD WINAPI MyCreateProcessInternalW(
 				SetEnvironmentVariable(L"EMU_PROGRAM", lpApplicationName);
 				wcsncat(wchar4tmp, L"\\peloader.exe", 14);
 				ret = ((__CreateProcessInternalW)cpi4acc)(unknown1, wchar4tmp, lpCommandLine, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation, unknown2);
-				memcpy(ncf, NCFCodeOLD2, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), ncf, sizeof(JMPCode));
 				memcpy(cpi, JMPCode, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode)); return ret;
 			}
 			else if (PeLdrIsValidX86(lpApplicationName) != 0) {
 				SetEnvironmentVariable(L"EMU_PROGRAM", lpApplicationName);
 				wcsncat(wchar4tmp, L"\\peloaderc.exe", 15);
 				ret = ((__CreateProcessInternalW)cpi4acc)(unknown1, wchar4tmp, lpCommandLine, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation, unknown2);
-				memcpy(ncf, NCFCodeOLD2, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), ncf, sizeof(JMPCode));
 				memcpy(cpi, JMPCode, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode)); return ret;
 			}
 			else {
-				if (fp4chk != 0) {
-					//fclose(fp4chk);
-					if (((wchar_t*)lpApplicationName) != 0) {
-						wcscat_s(windowsdir3, windowsdirtmp2);
-						wcscat_s(windowsdir3, L" ");
-						wcscat_s(windowsdir3, L"\"");
-						wcscat_s(windowsdir3, ((wchar_t*)lpApplicationName));
-						wcscat_s(windowsdir3, L"\"");
-						wcscat_s(windowsdir3, ((wchar_t*)lpCommandLine) + wcslen(((wchar_t*)lpApplicationName)));
-						ret = ((__CreateProcessInternalW)cpi4acc)(unknown1, windowsdirtmp2, windowsdir3, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation, unknown2);
-						memcpy(ncf, NCFCodeOLD2, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), ncf, sizeof(JMPCode));
-						memcpy(cpi, JMPCode, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode)); return ret;
-					}
-					else {
-						wcscat_s(windowsdir3, windowsdirtmp2);
-						wcscat_s(windowsdir3, L" ");
-						wcscat_s(windowsdir3, ((wchar_t*)lpCommandLine));
-						ret = ((__CreateProcessInternalW)cpi4acc)(unknown1, windowsdirtmp2, windowsdir3, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation, unknown2);
-						memcpy(ncf, NCFCodeOLD2, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), ncf, sizeof(JMPCode));
-						memcpy(cpi, JMPCode, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode)); return ret;
-					}
-				}
-				else {
-					ret = ((__CreateProcessInternalW)cpi4acc)(unknown1, lpApplicationName, lpCommandLine, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation, unknown2);
-					memcpy(ncf, NCFCodeOLD2, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), ncf, sizeof(JMPCode));
-					memcpy(cpi, JMPCode, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode)); return ret;
-				}
-			}
-		}
-	}
-		if (fp4chk != 0) {
-			//fclose(fp4chk);
-			if (((wchar_t*)lpApplicationName) != 0) {
-				wcscat_s(windowsdir3, windowsdirtmp2);
-				wcscat_s(windowsdir3, L" ");
-				wcscat_s(windowsdir3, L"\"");
-				wcscat_s(windowsdir3, ((wchar_t*)lpApplicationName));
-				wcscat_s(windowsdir3, L"\"");
-				wcscat_s(windowsdir3, ((wchar_t*)lpCommandLine) + wcslen(((wchar_t*)lpApplicationName)));
-				ret = ((__CreateProcessInternalW)cpi4acc)(unknown1, windowsdirtmp2, windowsdir3, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation, unknown2);
-				memcpy(ncf, NCFCodeOLD2, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), ncf, sizeof(JMPCode));
-				memcpy(cpi, JMPCode, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode)); return ret;
-			}
-			else {
-				wcscat_s(windowsdir3, windowsdirtmp2);
-				wcscat_s(windowsdir3, L" ");
-				wcscat_s(windowsdir3, ((wchar_t*)lpCommandLine));
-				ret = ((__CreateProcessInternalW)cpi4acc)(unknown1, windowsdirtmp2, windowsdir3, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation, unknown2);
-				memcpy(ncf, NCFCodeOLD2, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), ncf, sizeof(JMPCode));
+				ret = ((__CreateProcessInternalW)cpi4acc)(unknown1, lpApplicationName, lpCommandLine, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation, unknown2);
 				memcpy(cpi, JMPCode, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode)); return ret;
 			}
 		}
-		else {
-			//if (fp4chk != nullptr) { fclose(fp4chk); }
-			ret = ((__CreateProcessInternalW)cpi4acc)(unknown1, lpApplicationName, lpCommandLine, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation, unknown2);
-		memcpy(ncf, NCFCodeOLD2, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), ncf, sizeof(JMPCode));
+		ret = ((__CreateProcessInternalW)cpi4acc)(unknown1, lpApplicationName, lpCommandLine, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation, unknown2);
 		memcpy(cpi, JMPCode, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode)); return ret;
 	}
 }
@@ -517,9 +448,10 @@ DWORD WINAPI MyCreateProcessW(
 			}
 			//MessageBoxW(0, wchar4tmp2, L"wchar4tmp2", 0);
 			char wchar4tmp24chk[4096];
-			wcstombs(wchar4tmp24chk, wchar4tmp2,4096);
-			FILE* exeexistchk = fopen(wchar4tmp24chk,"rb");
-			if (exeexistchk == NULL) {wcscat(wchar4tmp2,L".EXE"); } else { fclose(exeexistchk); }
+			wcstombs(wchar4tmp24chk, wchar4tmp2, 4096);
+			FILE* exeexistchk = fopen(wchar4tmp24chk, "rb");
+			if (exeexistchk == NULL) { wcscat(wchar4tmp2, L".EXE"); }
+			else { fclose(exeexistchk); }
 			DWORD Ret = GetModuleFileNameW(CpiHookModule, wchar4tmp, MAX_PATH);
 			wchar_t* Pp = wcsrchr(wchar4tmp, '\\');
 			if (Pp)
@@ -662,9 +594,9 @@ DWORD WINAPI MyCreateProcessA(
 	__in         LPSTARTUPINFOA lpStartupInfo,
 	__out        LPPROCESS_INFORMATION lpProcessInformation
 ) {
-	LPCWSTR lpApplicationName2 = 0; if (lpApplicationName != nullptr) { lpApplicationName2=(LPCWSTR)malloc(strlen(lpApplicationName) * 2); mbstowcs((wchar_t*)lpApplicationName2, (char*)lpApplicationName,strlen(lpApplicationName)); }
-	LPWSTR lpCommandLine2 = 0; if (lpCommandLine != nullptr) { lpCommandLine2=(LPWSTR)malloc(strlen(lpCommandLine) * 2); mbstowcs((wchar_t*)lpCommandLine2, (char*)lpCommandLine, strlen(lpCommandLine)); }
-	LPCWSTR lpCurrentDirectory2 = 0; if (lpCurrentDirectory != nullptr) { lpCurrentDirectory2=(LPCWSTR)malloc(strlen(lpCurrentDirectory) * 2); mbstowcs((wchar_t*)lpCurrentDirectory2, (char*)lpCurrentDirectory, strlen(lpCurrentDirectory)); }
+	LPCWSTR lpApplicationName2 = 0; if (lpApplicationName != nullptr) { lpApplicationName2 = (LPCWSTR)malloc(strlen(lpApplicationName) * 2); mbstowcs((wchar_t*)lpApplicationName2, (char*)lpApplicationName, strlen(lpApplicationName)); }
+	LPWSTR lpCommandLine2 = 0; if (lpCommandLine != nullptr) { lpCommandLine2 = (LPWSTR)malloc(strlen(lpCommandLine) * 2); mbstowcs((wchar_t*)lpCommandLine2, (char*)lpCommandLine, strlen(lpCommandLine)); }
+	LPCWSTR lpCurrentDirectory2 = 0; if (lpCurrentDirectory != nullptr) { lpCurrentDirectory2 = (LPCWSTR)malloc(strlen(lpCurrentDirectory) * 2); mbstowcs((wchar_t*)lpCurrentDirectory2, (char*)lpCurrentDirectory, strlen(lpCurrentDirectory)); }
 	LPSTARTUPINFOW lpStartupInfo2 = 0; if (lpStartupInfo != nullptr) { lpStartupInfo2 = (LPSTARTUPINFOW)malloc(sizeof(STARTUPINFOW)); }
 	LPWSTR __lpReserved2 = 0; if (lpStartupInfo->lpReserved != nullptr) { __lpReserved2 = (LPWSTR)malloc(strlen(lpStartupInfo->lpReserved) * 2); mbstowcs(__lpReserved2, lpStartupInfo->lpReserved, strlen(lpStartupInfo->lpReserved)); }
 	LPWSTR __lpDesktop2 = 0; if (lpStartupInfo->lpDesktop != nullptr) { __lpDesktop2 = (LPWSTR)malloc(strlen(lpStartupInfo->lpDesktop) * 2); mbstowcs(__lpDesktop2, lpStartupInfo->lpDesktop, strlen(lpStartupInfo->lpDesktop)); }
@@ -714,6 +646,7 @@ DWORD WINAPI MyCreateProcessAsUserW(
 	DWORD ret;
 	memcpy(NCFCodeOLD2, ncf, sizeof(JMPCode)); memcpy(ncf, NCFCodeOLD, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), ncf, sizeof(JMPCode));
 	memcpy(cpi2, JMPCodeOLD3, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi2, sizeof(JMPCode));
+	memcpy(cpi, JMPCodeOLD, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode));
 	wchar_t windowsdir[1024] = L"";
 	DWORD Ret = GetModuleFileNameW(CpiHookModule, windowsdir, 1024);
 	wchar_t* windowsdir2 = wcsrchr(windowsdir, '\\');
@@ -773,6 +706,7 @@ DWORD WINAPI MyCreateProcessAsUserW(
 					wcscat_s(windowsdir3, ((wchar_t*)lpCommandLine) + wcslen(((wchar_t*)lpApplicationName)));
 					ret = ((__CreateProcessAsUserW)cpi4acc2)(hToken, windowsdirtmp2, windowsdir3, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation);
 					memcpy(ncf, NCFCodeOLD2, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), ncf, sizeof(JMPCode));
+					memcpy(cpi, JMPCode, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode));
 					memcpy(cpi2, JMPCode3, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi2, sizeof(JMPCode)); return ret;
 				}
 				else {
@@ -781,6 +715,7 @@ DWORD WINAPI MyCreateProcessAsUserW(
 					wcscat_s(windowsdir3, ((wchar_t*)lpCommandLine));
 					ret = ((__CreateProcessAsUserW)cpi4acc2)(hToken, windowsdirtmp2, windowsdir3, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation);
 					memcpy(ncf, NCFCodeOLD2, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), ncf, sizeof(JMPCode));
+					memcpy(cpi, JMPCode, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode));
 					memcpy(cpi2, JMPCode3, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi2, sizeof(JMPCode)); return ret;
 				}
 			}
@@ -803,6 +738,7 @@ DWORD WINAPI MyCreateProcessAsUserW(
 				}
 			}
 			memcpy(ncf, NCFCodeOLD2, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), ncf, sizeof(JMPCode));
+			memcpy(cpi, JMPCode, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode));
 			memcpy(cpi2, JMPCode3, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi2, sizeof(JMPCode)); return ret;
 		}
 		if (lpApplicationName != nullptr) {
@@ -816,6 +752,7 @@ DWORD WINAPI MyCreateProcessAsUserW(
 				wcsncat(wchar4tmp, L"\\peloader.exe", 14);
 				ret = ((__CreateProcessAsUserW)cpi4acc2)(hToken, wchar4tmp, lpCommandLine, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation);
 				memcpy(ncf, NCFCodeOLD2, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), ncf, sizeof(JMPCode));
+				memcpy(cpi, JMPCode, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode));
 				memcpy(cpi2, JMPCode3, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi2, sizeof(JMPCode)); return ret;
 			}
 			else if (PeLdrIsValidX86(lpApplicationName) != 0) {
@@ -823,6 +760,7 @@ DWORD WINAPI MyCreateProcessAsUserW(
 				wcsncat(wchar4tmp, L"\\peloaderc.exe", 15);
 				ret = ((__CreateProcessAsUserW)cpi4acc2)(hToken, wchar4tmp, lpCommandLine, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation);
 				memcpy(ncf, NCFCodeOLD2, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), ncf, sizeof(JMPCode));
+				memcpy(cpi, JMPCode, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode));
 				memcpy(cpi2, JMPCode3, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi2, sizeof(JMPCode)); return ret;
 			}
 			else {
@@ -837,6 +775,7 @@ DWORD WINAPI MyCreateProcessAsUserW(
 						wcscat_s(windowsdir3, ((wchar_t*)lpCommandLine) + wcslen(((wchar_t*)lpApplicationName)));
 						ret = ((__CreateProcessAsUserW)cpi4acc2)(hToken, windowsdirtmp2, windowsdir3, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation);
 						memcpy(ncf, NCFCodeOLD2, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), ncf, sizeof(JMPCode));
+						memcpy(cpi, JMPCode, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode));
 						memcpy(cpi2, JMPCode3, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi2, sizeof(JMPCode)); return ret;
 					}
 					else {
@@ -845,12 +784,14 @@ DWORD WINAPI MyCreateProcessAsUserW(
 						wcscat_s(windowsdir3, ((wchar_t*)lpCommandLine));
 						ret = ((__CreateProcessAsUserW)cpi4acc2)(hToken, windowsdirtmp2, windowsdir3, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation);
 						memcpy(ncf, NCFCodeOLD2, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), ncf, sizeof(JMPCode));
+						memcpy(cpi, JMPCode, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode));
 						memcpy(cpi2, JMPCode3, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi2, sizeof(JMPCode)); return ret;
 					}
 				}
 				else {
 					ret = ((__CreateProcessAsUserW)cpi4acc2)(hToken, lpApplicationName, lpCommandLine, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation);
 					memcpy(ncf, NCFCodeOLD2, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), ncf, sizeof(JMPCode));
+					memcpy(cpi, JMPCode, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode));
 					memcpy(cpi2, JMPCode3, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi2, sizeof(JMPCode)); return ret;
 				}
 			}
@@ -867,6 +808,7 @@ DWORD WINAPI MyCreateProcessAsUserW(
 			wcscat_s(windowsdir3, ((wchar_t*)lpCommandLine) + wcslen(((wchar_t*)lpApplicationName)));
 			ret = ((__CreateProcessAsUserW)cpi4acc2)(hToken, windowsdirtmp2, windowsdir3, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation);
 			memcpy(ncf, NCFCodeOLD2, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), ncf, sizeof(JMPCode));
+			memcpy(cpi, JMPCode, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode));
 			memcpy(cpi2, JMPCode3, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi2, sizeof(JMPCode)); return ret;
 		}
 		else {
@@ -875,6 +817,7 @@ DWORD WINAPI MyCreateProcessAsUserW(
 			wcscat_s(windowsdir3, ((wchar_t*)lpCommandLine));
 			ret = ((__CreateProcessAsUserW)cpi4acc2)(hToken, windowsdirtmp2, windowsdir3, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation);
 			memcpy(ncf, NCFCodeOLD2, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), ncf, sizeof(JMPCode));
+			memcpy(cpi, JMPCode, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode));
 			memcpy(cpi2, JMPCode3, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi2, sizeof(JMPCode)); return ret;
 		}
 	}
@@ -882,6 +825,7 @@ DWORD WINAPI MyCreateProcessAsUserW(
 		//if (fp4chk != nullptr) { fclose(fp4chk); }
 		ret = ((__CreateProcessAsUserW)cpi4acc2)(hToken, lpApplicationName, lpCommandLine, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation);
 		memcpy(ncf, NCFCodeOLD2, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), ncf, sizeof(JMPCode));
+		memcpy(cpi, JMPCode, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi, sizeof(JMPCode));
 		memcpy(cpi2, JMPCode3, sizeof(JMPCode)); FlushInstructionCache(GetCurrentProcess(), cpi2, sizeof(JMPCode)); return ret;
 	}
 }
@@ -935,7 +879,6 @@ DWORD WINAPI MyCreateProcessAsUserA(
 	return ret;
 }
 
-
 wchar_t lpApplicationName_tmp[4096];
 
 
@@ -969,7 +912,7 @@ extern "C" __declspec(dllexport) bool CpiMakeHook()
 
 	HookInstalled = true;
 
-	bool iscpwhooktarget=false;
+	bool iscpwhooktarget = false;
 
 #ifdef _X86_
 	SetThemeAppProperties(0);
@@ -982,7 +925,6 @@ extern "C" __declspec(dllexport) bool CpiMakeHook()
 	//BYTE* cpi=(BYTE*)GetProcAddress(HM,"CreateProcessInternalW");
 	cpi = (BYTE*)GetProcAddress(HM, "CreateProcessInternalW");
 	cpi4acc = (BYTE*)GetProcAddress(HM, "CreateProcessInternalW");
-	//if (cpi == 0) { cpi = (BYTE*)GetProcAddress(HM, "CreateProcessW"); cpi4acc = (BYTE*)GetProcAddress(HM, "CreateProcessW"); cpaptx = (BYTE*)GetProcAddress(HM, "CreateProcessA"); iscpwhooktarget = true; }
 	if(cpi==0)
 	{
 		HM=LoadLibraryA("kernel32.dll");
@@ -992,13 +934,16 @@ extern "C" __declspec(dllexport) bool CpiMakeHook()
 		//ptr4cpia = (__CreateProcessInternalA)GetProcAddress(HM, "CreateProcessInternalA");
 		cpi=(BYTE*)GetProcAddress(HM,"CreateProcessInternalW");
 		cpi4acc = (BYTE*)GetProcAddress(HM, "CreateProcessInternalW");
-		if (cpi == 0) { cpi = (BYTE*)GetProcAddress(HM, "CreateProcessW"); cpi4acc = (BYTE*)GetProcAddress(HM, "CreateProcessW"); cpaptx = (BYTE*)GetProcAddress(HM, "CreateProcessA"); cpi2 = (BYTE*)GetProcAddress(HM, "CreateProcessAsUserW"); cpi4acc2 = (BYTE*)GetProcAddress(HM, "CreateProcessAsUserW"); cpauaptx = (BYTE*)GetProcAddress(HM, "CreateProcessAsUserA"); iscpwhooktarget = true; }
-			//return false;
+		if (cpi == 0) { 
+			cpi = (BYTE*)GetProcAddress(HM, "CreateProcessW"); cpi4acc = (BYTE*)GetProcAddress(HM, "CreateProcessW"); cpaptx = (BYTE*)GetProcAddress(HM, "CreateProcessA"); cpi2 = (BYTE*)GetProcAddress(HM, "CreateProcessAsUserW"); cpi4acc2 = (BYTE*)GetProcAddress(HM, "CreateProcessAsUserW"); cpauaptx = (BYTE*)GetProcAddress(HM, "CreateProcessAsUserA"); iscpwhooktarget = true; 
+			if (cpi == 0)
+				return false;
+		}
 	}
 
 	HM = LoadLibraryA("ntdll.dll");
 	if (HM != 0) {
-	ncf = (BYTE*)GetProcAddress(HM, "RtlDosPathNameToNtPathName_U");
+		ncf = (BYTE*)GetProcAddress(HM, "RtlDosPathNameToNtPathName_U");
 	}
 	else { ncf = (BYTE*)malloc(sizeof(JMPCode)); }
 
@@ -1084,55 +1029,39 @@ ff e0				 jmp		 eax
 	BYTE *thunk=(BYTE*)malloc(sizeof(CBCode));
 	memcpy(thunk,CBCode,sizeof(CBCode));
 #endif
-
-
 if (iscpwhooktarget==true){
-#ifdef _WIN64
-	* (UINT64*)(JMPCode2 + 2) = ((UINT64)(&MyCreateProcessA));
-	*(UINT64*)(JMPCode4 + 2) = ((UINT64)(&MyCreateProcessAsUserA));
-#else
 #ifdef _ARM_
 	* (DWORD*)(JMPCode2 + 4) = 1|((DWORD)(&MyCreateProcessA));
-	*(DWORD*)(JMPCode4 + 4) = 1 | ((DWORD)(&MyCreateProcessAsUserA));
+	* (DWORD*)(JMPCode4 + 4) = 1|((DWORD)(&MyCreateProcessAsUserA));
 #else
 	* (DWORD*)(JMPCode2 + 1) = ((DWORD)(&MyCreateProcessA));
-	*(DWORD*)(JMPCode4 + 1) = ((DWORD)(&MyCreateProcessAsUserA));
-#endif
+	* (DWORD*)(JMPCode4 + 1) = ((DWORD)(&MyCreateProcessAsUserA));
 #endif
 	VirtualProtect(cpaptx, sizeof(JMPCode), PAGE_EXECUTE_READWRITE, &Tmp);
 	memcpy(JMPCodeOLD2, cpaptx, sizeof(JMPCode));
 	memcpy(cpaptx, JMPCode2, sizeof(JMPCode));
 	FlushInstructionCache(GetCurrentProcess(), cpaptx, sizeof(JMPCode));
 
-	VirtualProtect(cpauaptx, sizeof(JMPCode), PAGE_EXECUTE_READWRITE, &Tmp);
+	/*VirtualProtect(cpauaptx, sizeof(JMPCode), PAGE_EXECUTE_READWRITE, &Tmp);
 	memcpy(JMPCodeOLD4, cpauaptx, sizeof(JMPCode));
 	memcpy(cpauaptx, JMPCode4, sizeof(JMPCode));
-	FlushInstructionCache(GetCurrentProcess(), cpauaptx, sizeof(JMPCode));
+	FlushInstructionCache(GetCurrentProcess(), cpauaptx, sizeof(JMPCode));*/
 }
 
 
 if (iscpwhooktarget==true){
-#ifdef _WIN64
-	* (UINT64*)(JMPCode + 2) = ((UINT64)(&MyCreateProcessW));
-	*(UINT64*)(JMPCode3 + 2) = ((UINT64)(&MyCreateProcessAsUserW));
-#else
 #ifdef _ARM_
-	* (DWORD*)(JMPCode + 4) = 1|((DWORD)(&MyCreateProcessW));
-	*(DWORD*)(JMPCode3 + 4) = 1 | ((DWORD)(&MyCreateProcessAsUserW));
+	* (DWORD*)(JMPCode + 4)  = 1|((DWORD)(&MyCreateProcessW));
+	* (DWORD*)(JMPCode3 + 4) = 1|((DWORD)(&MyCreateProcessAsUserW));
 #else
-	* (DWORD*)(JMPCode + 1) = ((DWORD)(&MyCreateProcessW));
-	*(DWORD*)(JMPCode3 + 1) = ((DWORD)(&MyCreateProcessAsUserW));
-#endif
+	* (DWORD*)(JMPCode + 1)  = ((DWORD)(&MyCreateProcessW));
+	* (DWORD*)(JMPCode3 + 1) = ((DWORD)(&MyCreateProcessAsUserW));
 #endif
 }else{
-#ifdef _WIN64
-	* (UINT64*)(JMPCode + 2) = ((UINT64)(&MyCreateProcessInternalW));
-#else
 #ifdef _ARM_
 	* (DWORD*)(JMPCode + 4) = 1|((DWORD)(&MyCreateProcessInternalW));
 #else
 	* (DWORD*)(JMPCode + 1) = ((DWORD)(&MyCreateProcessInternalW));
-#endif
 #endif
 }
 #if 0
@@ -1154,28 +1083,24 @@ if (iscpwhooktarget==true){
 		memcpy(&cpi - 7, JMPCodeOLD, 7);
 	}
 #endif
-	VirtualProtect(ncf, sizeof(JMPCode), PAGE_EXECUTE_READWRITE, &Tmp);
-	memcpy(NCFCodeOLD, ncf, sizeof(JMPCode));
-
 	VirtualProtect(cpi,sizeof(JMPCode),PAGE_EXECUTE_READWRITE,&Tmp);
 
 //	InterlockedExchange64((volatile LONGLONG*)cpi,*(LONGLONG*)JMPCode);
 	memcpy(JMPCodeOLD,cpi, sizeof(JMPCode));
 	memcpy(cpi,JMPCode, sizeof(JMPCode));
-
-	if (iscpwhooktarget == true) {
-		VirtualProtect(cpi2, sizeof(JMPCode), PAGE_EXECUTE_READWRITE, &Tmp);
-		memcpy(JMPCodeOLD3, cpi2, sizeof(JMPCode));
-		memcpy(cpi2, JMPCode3, sizeof(JMPCode));
-		FlushInstructionCache(GetCurrentProcess(), cpi2, sizeof(JMPCode));
-	}
-
 	//printf("cpi:0x%08X\n0x%08X\n%02X%02X%02X%02X\n", (&cpi), (&cpi4acc), (*cpi), (*(cpi + 1)), (*(cpi + 2)), (*(cpi + 3)));
 	//memcpy(cpi,JMPCode,8);
 
 	/*VirtualProtect(thunk, sizeof(CBCode), PAGE_EXECUTE_READWRITE, &Tmp);
 	FlushInstructionCache(GetCurrentProcess(),thunk,sizeof(CBCode));*/
 	FlushInstructionCache(GetCurrentProcess(),cpi,sizeof(JMPCode));
+
+	/*if (iscpwhooktarget == true) {
+		VirtualProtect(cpi2, sizeof(JMPCode), PAGE_EXECUTE_READWRITE, &Tmp);
+		memcpy(JMPCodeOLD3, cpi2, sizeof(JMPCode));
+		memcpy(cpi2, JMPCode3, sizeof(JMPCode));
+		FlushInstructionCache(GetCurrentProcess(), cpi2, sizeof(JMPCode));
+	}*/
 
 	return true;
 }
